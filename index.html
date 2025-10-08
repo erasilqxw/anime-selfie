@@ -713,21 +713,47 @@ if (file) {
         }
 
         // Функция генерации (пока заглушка, вставь свой API здесь)
-        async function го() {
-            let file = document.getElementById('фото').files[0];
-            if (!file) return alert('Загрузи фото сначала!');
-            if (!selectedStyle) return alert('Выбери стиль аниме!');
+        // В конце твоего скрипта, замени функцию го() на эту:
+async function го() {
+    let file = document.getElementById('фото').files[0];
+    if (!file) return alert('Загрузи фото сначала!');
+    if (!selectedStyle) return alert('Выбери стиль аниме!');
 
-            // Здесь будет код с API, пока заглушка
-            alert(`Генерирую в стиле ${selectedStyle}! (Пока это заглушка, но скоро будет реально)`);
+    // Конвертируем файл в base64
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async function() {
+        let base64 = reader.result.split(',')[1]; // Только base64 часть
 
-            // Пример добавления результата
+        // Подготавливаем запрос (для стиля можно добавить логику, пока general anime)
+        let apiUrl = 'https://akhaliq-animeganv2.hf.space/api/predict';
+        let data = {
+            "data": [ 
+                data:image/jpeg;base64,${base64}, // Фото в base64
+                "v2" // Версия: v1 - robust, v2 - stylization. Для стилей адаптируй, напр. if (selectedStyle === 'naruto') use "v2"
+            ]
+        };
+
+        try {
+            let response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            let resultJson = await response.json();
+            let animeBase64 = resultJson.data[0].split(',')[1]; // Получаем base64 от API
+
+            // Показываем результат
             let result = document.getElementById('result');
             let img = document.createElement('img');
-            img.src = 'https://via.placeholder.com/300?text=Твоё+Аниме+в+стиле+' + selectedStyle; // Замени на реальный URL от API
+            img.src = data:image/png;base64,${animeBase64};
             img.classList.add('result-img');
             result.appendChild(img);
+        } catch (error) {
+            alert('Ошибка: ' + error.message);
         }
+    };
+}
 
         // Генерация частиц (аниме-эффект)
         function createParticles() {
