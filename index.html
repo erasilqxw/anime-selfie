@@ -956,287 +956,322 @@
     </div>
 
     <header>
-    <h1>Anime Selfie Generator</h1>
-</header>
+        <h1>Anime Selfie Generator</h1>
+    </header>
 
-<!-- Баннер раздел -->
-<section class="banner-section">
-    <h2 class="banner-title">Стань героем аниме прямо сейчас!</h2>
-    <p class="banner-subtitle">Загрузи селфи и преврати себя в персонажа из Наруто, Джоджо или Ван Пис. Быстро, весело и бесплатно!</p>
-    <a href="#main-container" class="banner-btn">Начать превращение</a>
-</section>
+    <!-- Баннер раздел -->
+    <section class="banner-section">
+        <h2 class="banner-title">Стань героем аниме прямо сейчас!</h2>
+        <p class="banner-subtitle">Загрузи селфи и преврати себя в персонажа из Наруто, Джоджо или Ван Пис. Быстро, весело и бесплатно!</p>
+        <a href="#main-container" class="banner-btn">Начать превращение</a>
+    </section>
 
-<!-- Описание сайта -->
-<section class="description-section">
-    <h2 class="description-title">Что такое Anime Selfie Generator?</h2>
-    <p class="description-text">Это уникальный сайт, где ты можешь превратить своё обычное фото в крутой аниме-стиль с помощью ИИ. Выбери стиль из популярных аниме, загрузи фото — и готово! Мы используем современные нейросети, чтоб результат был реалистичным и забавным. Подходит для фанатов аниме, косплееров или просто для фана.</p>
-    <ul class="description-list">
-        <li>Шаг 1: Загрузи своё селфи.</li>
-        <li>Шаг 2: Выбери стиль (Наруто, Джоджо, Ван Пис или другие).</li>
-        <li>Шаг 3: Нажми кнопку и скачай результат!</li>
-        <li>Бонус: Делись в соцсетях и собирай лайки.</li>
-    </ul>
-</section>
+    <!-- Основной контейнер -->
+    <div class="main-container">
+        <div class="upload-section">
+            <label for="фото" class="upload-label">Загрузи своё фото</label>
+            <input type="file" id="фото" accept="image/*">
+            <div class="preview">
+                <img id="preview-img" src="" alt="Предпросмотр">
+            </div>
+        </div>
 
-<!-- Галерея с примерами фото -->
-<section class="gallery-section">
-    <h2 class="description-title">Примеры превращений</h2>
-    <div class="gallery-item">
-        <img src="https://via.placeholder.com/400x300?text=До:+Обычное+фото" alt="До">
-        <span class="gallery-caption">До: Обычное селфи</span>
-    </div>
-    <div class="gallery-item">
-        <img src="https://via.placeholder.com/400x300?text=После:+Наруто" alt="После Наруто">
-        <span class="gallery-caption">После: Стиль Наруто</span>
-    </div>
-    <div class="gallery-item">
-        <img src="https://via.placeholder.com/400x300?text=До:+Обычное+фото" alt="До">
-        <span class="gallery-caption">До: Обычное селфи</span>
-    </div>
-    <div class="gallery-item">
-        <img src="https://via.placeholder.com/400x300?text=После:+Джоджо" alt="После Джоджо">
-        <span class="gallery-caption">После: Стиль Джоджо</span>
-    </div>
-    <div class="gallery-item">
-        <img src="https://via.placeholder.com/400x300?text=До:+Обычное+фото" alt="До">
-        <span class="gallery-caption">До: Обычное селфи</span>
-    </div>
-    <div class="gallery-item">
-        <img src="https://via.placeholder.com/400x300?text=После:+Ван+Пис" alt="После Ван Пис">
-        <span class="gallery-caption">После: Стиль Ван Пис</span>
-    </div>
-</section>
+        <div class="styles-section">
+            <button class="style-btn" onclick="selectStyle('naruto')">Наруто</button>
+            <button class="style-btn" onclick="selectStyle('jojo')">Джоджо</button>
+            <button class="style-btn" onclick="selectStyle('onepiece')">Ван Пис</button>
+        </div>
 
-<!-- Преимущества -->
-<section class="advantages-section">
-    <div class="advantage-card">
-        <div class="advantage-icon">🚀</div>
-        <h3 class="advantage-title">Быстро и просто</h3>
-        <p class="advantage-text">Преобразование занимает всего секунды. Не нужно скачивать приложения или регистрироваться.</p>
-    </div>
-    <div class="advantage-card">
-        <div class="advantage-icon">💸</div>
-        <h3 class="advantage-title">Бесплатно на старте</h3>
-        <p class="advantage-text">3 попытки в день бесплатно, потом всего 30 рублей за 10 генераций. Дешево и выгодно!</p>
-    </div>
-    <div class="advantage-card">
-        <div class="advantage-icon">🎨</div>
-        <h3 class="advantage-title">Крутые стили</h3>
-        <p class="advantage-text">Выбери из популярных аниме, и ИИ сделает тебя героем. Добавим больше стилей скоро!</p>
-    </div>
-    <div class="advantage-card">
-        <div class="advantage-icon">🔒</div>
-        <h3 class="advantage-title">Безопасно</h3>
-        <p class="advantage-text">Фото не сохраняются, всё через защищённые сервисы. Твоя приватность на первом месте.</p>
-    </div>
-    <div class="advantage-card">
-        <div class="advantage-icon">📱</div>
-        <h3 class="advantage-title">Для всех устройств</h3>
-        <p class="advantage-text">Работает на ПК, телефоне, планшете. Responsive дизайн для удобства.</p>
-    </div>
-    <div class="advantage-card">
-        <div class="advantage-icon">🌟</div>
-        <h3 class="advantage-title">Весело и вирусно</h3>
-        <p class="advantage-text">Делись результатами в TikTok или Instagram — соберёшь кучу просмотров!</p>
-    </div>
-</section>
+        <button onclick="го()">Преврати меня в аниме!</button>
 
-<div class="main-container">
-    <div class="upload-section">
-        <label for="фото" class="upload-label">Загрузи своё фото</label>
-        <input type="file" id="фото" accept="image/*">
-        <div class="preview">
-            <img id="preview-img" src="" alt="Предпросмотр">
+        <div class="result-section" id="result"></div>
+    </div>
+
+    <!-- Описание сайта -->
+    <section class="description-section">
+        <h2 class="description-title">Что такое Anime Selfie Generator?</h2>
+        <p class="description-text">Это уникальный сайт, где ты можешь превратить своё обычное фото в крутой аниме-стиль с помощью ИИ. Выбери стиль из популярных аниме, загрузи фото — и готово! Мы используем современные нейросети, чтоб результат был реалистичным и забавным. Подходит для фанатов аниме, косплееров или просто для фана.</p>
+        <ul class="description-list">
+            <li>Шаг 1: Загрузи своё селфи.</li>
+            <li>Шаг 2: Выбери стиль (Наруто, Джоджо, Ван Пис или другие).</li>
+            <li>Шаг 3: Нажми кнопку и скачай результат!</li>
+            <li>Бонус: Делись в соцсетях и собирай лайки.</li>
+        </ul>
+    </section>
+
+    <!-- Галерея с примерами фото -->
+    <section class="gallery-section">
+        <h2 class="description-title">Примеры превращений</h2>
+        <div class="gallery-item">
+            <img src="https://via.placeholder.com/400x300?text=До:+Обычное+фото" alt="До">
+            <span class="gallery-caption">До: Обычное селфи</span>
+        </div>
+        <div class="gallery-item">
+            <img src="https://via.placeholder.com/400x300?text=После:+Наруто" alt="После Наруто">
+            <span class="gallery-caption">После: Стиль Наруто</span>
+        </div>
+        <div class="gallery-item">
+            <img src="https://via.placeholder.com/400x300?text=До:+Обычное+фото" alt="До">
+            <span class="gallery-caption">До: Обычное селфи</span>
+        </div>
+        <div class="gallery-item">
+            <img src="https://via.placeholder.com/400x300?text=После:+Джоджо" alt="После Джоджо">
+            <span class="gallery-caption">После: Стиль Джоджо</span>
+        </div>
+        <div class="gallery-item">
+            <img src="https://via.placeholder.com/400x300?text=До:+Обычное+фото" alt="До">
+            <span class="gallery-caption">До: Обычное селфи</span>
+        </div>
+        <div class="gallery-item">
+            <img src="https://via.placeholder.com/400x300?text=После:+Ван+Пис" alt="После Ван Пис">
+            <span class="gallery-caption">После: Стиль Ван Пис</span>
+        </div>
+    </section>
+
+    <!-- Преимущества -->
+    <section class="advantages-section">
+        <div class="advantage-card">
+            <div class="advantage-icon">🚀</div>
+            <h3 class="advantage-title">Быстро и просто</h3>
+            <p class="advantage-text">Преобразование занимает всего секунды. Не нужно скачивать приложения или регистрироваться.</p>
+        </div>
+        <div class="advantage-card">
+            <div class="advantage-icon">💸</div>
+            <h3 class="advantage-title">Бесплатно на старте</h3>
+            <p class="advantage-text">3 попытки в день бесплатно, потом всего 30 рублей за 10 генераций. Дешево и выгодно!</p>
+        </div>
+        <div class="advantage-card">
+            <div class="advantage-icon">🎨</div>
+            <h3 class="advantage-title">Крутые стили</h3>
+            <p class="advantage-text">Выбери из популярных аниме, и ИИ сделает тебя героем. Добавим больше стилей скоро!</p>
+        </div>
+        <div class="advantage-card">
+            <div class="advantage-icon">🔒</div>
+            <h3 class="advantage-title">Безопасно</h3>
+            <p class="advantage-text">Фото не сохраняются, всё через защищённые сервисы. Твоя приватность на первом месте.</p>
+        </div>
+        <div class="advantage-card">
+            <div class="advantage-icon">📱</div>
+            <h3 class="advantage-title">Для всех устройств</h3>
+            <p class="advantage-text">Работает на ПК, телефоне, планшете. Responsive дизайн для удобства.</p>
+        </div>
+        <div class="advantage-card">
+            <div class="advantage-icon">🌟</div>
+            <h3 class="advantage-title">Весело и вирусно</h3>
+            <p class="advantage-text">Делись результатами в TikTok или Instagram — соберёшь кучу просмотров!</p>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+        <h2 class="faq-title">Часто задаваемые вопросы</h2>
+        <div class="faq-item">
+            <div class="faq-question">Как работает генерация? <span class="faq-toggle">+</span></div>
+            <div class="faq-answer">Мы используем ИИ-нейросети, чтоб преобразовать твоё фото в аниме-стиль. Просто загрузи и выбери!</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">Сколько стоит? <span class="faq-toggle">+</span></div>
+            <div class="faq-answer">Бесплатно 3 раза в день, потом 30 руб за 10 попыток через ЮKassa.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">Можно добавить свой стиль? <span class="faq-toggle">+</span></div>
+            <div class="faq-answer">Пока нет, но скоро добавим! Пиши в поддержку.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">Что если фото не грузится? <span class="faq-toggle">+</span></div>
+            <div class="faq-answer">Проверь формат (JPG/PNG) и размер (до 5МБ). Если проблема — обнови страницу.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">Есть ли мобильная версия? <span class="faq-toggle">+</span></div>
+            <div class="faq-answer">Да, сайт адаптивный — работает на всех устройствах.</div>
+        </div>
+    </section>
+
+    <!-- Отзывы -->
+    <section class="reviews-section">
+        <h2 class="description-title">Отзывы пользователей</h2>
+        <div class="review-card">
+            <img src="https://via.placeholder.com/80?text=User1" alt="User1" class="review-photo">
+            <p class="review-text">"Круто! Стал как Наруто за секунду. Рекомендую!"</p>
+            <p class="review-author">Алекс, 18 лет</p>
+        </div>
+        <div class="review-card">
+            <img src="https://via.placeholder.com/80?text=User2" alt="User2" class="review-photo">
+            <p class="review-text">"Весело и просто. Добавьте больше стилей!"</p>
+            <p class="review-author">Маша, 22 года</p>
+        </div>
+        <div class="review-card">
+            <img src="https://via.placeholder.com/80?text=User3" alt="User3" class="review-photo">
+            <p class="review-text">"Идеально для косплея. Качество на высоте!"</p>
+            <p class="review-author">Дима, 25 лет</p>
+        </div>
+        <div class="review-card">
+            <img src="https://via.placeholder.com/80?text=User4" alt="User4" class="review-photo">
+            <p class="review-text">"Бесплатно и быстро. Супер!"</p>
+            <p class="review-author">Катя, 19 лет</p>
+        </div>
+    </section>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="reg-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 class="modal-title">Регистрация для безлимита</h2>
+            <p class="modal-text">Зарегистрируйся и получи 10 бесплатных генераций + скидки на премиум!</p>
+            <button class="modal-btn" onclick="alert('Регистрация в разработке!')">Зарегистрироваться</button>
         </div>
     </div>
 
-    <div class="styles-section">
-        <button class="style-btn" onclick="selectStyle('naruto')">Наруто</button>
-        <button class="style-btn" onclick="selectStyle('jojo')">Джоджо</button>
-        <button class="style-btn" onclick="selectStyle('onepiece')">Ван Пис</button>
-    </div>
+    <footer>
+        <ul class="footer-links">
+            <li><a href="#">О нас</a></li>
+            <li><a href="#">Поддержка</a></li>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">TikTok</a></li>
+        </ul>
+        <p class="footer-copyright">&copy; 2025 Anime Selfie Generator. Все права защищены.</p>
+    </footer>
 
-    <button onclick="го()">Преврати меня в аниме!</button>
+    <script>
+        let selectedStyle = ''; // Для хранения выбранного стиля
 
-    <div class="result-section" id="result"></div>
-</div>
-
-<!-- FAQ -->
-<section class="faq-section">
-    <h2 class="faq-title">Часто задаваемые вопросы</h2>
-    <div class="faq-item">
-        <div class="faq-question">Как работает генерация? <span class="faq-toggle">+</span></div>
-        <div class="faq-answer">Мы используем ИИ-нейросети, чтоб преобразовать твоё фото в аниме-стиль. Просто загрузи и выбери!</div>
-    </div>
-    <div class="faq-item">
-        <div class="faq-question">Сколько стоит? <span class="faq-toggle">+</span></div>
-        <div class="faq-answer">Бесплатно 3 раза в день, потом 30 руб за 10 попыток через ЮKassa.</div>
-    </div>
-    <div class="faq-item">
-        <div class="faq-question">Можно добавить свой стиль? <span class="faq-toggle">+</span></div>
-        <div class="faq-answer">Пока нет, но скоро добавим! Пиши в поддержку.</div>
-    </div>
-    <div class="faq-item">
-        <div class="faq-question">Что если фото не грузится? <span class="faq-toggle">+</span></div>
-        <div class="faq-answer">Проверь формат (JPG/PNG) и размер (до 5МБ). Если проблема — обнови страницу.</div>
-    </div>
-    <div class="faq-item">
-        <div class="faq-question">Есть ли мобильная версия? <span class="faq-toggle">+</span></div>
-        <div class="faq-answer">Да, сайт адаптивный — работает на всех устройствах.</div>
-    </div>
-</section>
-
-<!-- Отзывы -->
-<section class="reviews-section">
-    <h2 class="description-title">Отзывы пользователей</h2>
-    <div class="review-card">
-        <img src="https://via.placeholder.com/80?text=User1" alt="User1" class="review-photo">
-        <p class="review-text">"Круто! Стал как Наруто за секунду. Рекомендую!"</p>
-        <p class="review-author">Алекс, 18 лет</p>
-    </div>
-    <div class="review-card">
-        <img src="https://via.placeholder.com/80?text=User2" alt="User2" class="review-photo">
-        <p class="review-text">"Весело и просто. Добавьте больше стилей!"</p>
-        <p class="review-author">Маша, 22 года</p>
-    </div>
-    <div class="review-card">
-        <img src="https://via.placeholder.com/80?text=User3" alt="User3" class="review-photo">
-        <p class="review-text">"Идеально для косплея. Качество на высоте!"</p>
-        <p class="review-author">Дима, 25 лет</p>
-    </div>
-    <div class="review-card">
-        <img src="https://via.placeholder.com/80?text=User4" alt="User4" class="review-photo">
-        <p class="review-text">"Бесплатно и быстро. Супер!"</p>
-        <p class="review-author">Катя, 19 лет</p>
-    </div>
-</section>
-
-<!-- Модальное окно (для регистрации или оплаты) -->
-<div class="modal" id="reg-modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal()">&times;</span>
-        <h2 class="modal-title">Регистрация для безлимита</h2>
-        <p class="modal-text">Зарегистрируйся и получи 10 бесплатных генераций + скидки на премиум!</p>
-        <button class="modal-btn" onclick="alert('Регистрация в разработке!')">Зарегистрироваться</button>
-    </div>
-</div>
-
-<script>
-    let selectedStyle = ''; // Для хранения выбранного стиля
-
-    // Предпросмотр фото
-    document.getElementById('фото').addEventListener('change', function(e) {
-        let file = e.target.files[0];
-        if (file) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('preview-img').src = e.target.result;
+        // Предпросмотр фото
+        document.getElementById('фото').addEventListener('change', function(e) {
+            console.log('Событие change сработало!'); // Для отладки
+            let file = e.target.files[0];
+            if (file) {
+                console.log('Файл выбран:', file.name); // Для отладки
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log('Файл прочитан, устанавливаем src'); // Для отладки
+                    document.getElementById('preview-img').src = e.target.result;
+                };
+                reader.onerror = function(e) {
+                    console.error('Ошибка чтения файла:', e); // Для отладки
+                    alert('Не удалось прочитать файл. Попробуй другой.');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                console.log('Файл не выбран'); // Для отладки
+                alert('Выбери файл!');
             }
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Выбор стиля
-    function selectStyle(style) {
-        selectedStyle = style;
-        document.querySelectorAll('.style-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        alert(`Выбран стиль: ${style.charAt(0).toUpperCase() + style.slice(1)}`);
-    }
-
-    // Функция генерации
-    async function го() {
-        let file = document.getElementById('фото').files[0];
-        if (!file) return alert('Загрузи фото сначала!');
-        if (!selectedStyle) return alert('Выбери стиль аниме!');
-
-        // Определяем версию на основе стиля
-        let version;
-        if (selectedStyle === 'naruto') {
-            version = 'version 2 (🔺 robustness,🔻 stylization)';
-        } else if (selectedStyle === 'jojo') {
-            version = 'version 1 (🔺 stylization, 🔻 robustness)';
-        } else if (selectedStyle === 'onepiece') {
-            version = 'version 2 (🔺 robustness,🔻 stylization)';
-        }
-
-        // Конвертируем файл в base64
-        let reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = async function() {
-            let base64 = reader.result.split(',')[1]; // Только base64 часть
-
-            // Подготавливаем запрос
-            let apiUrl = 'https://akhaliq-animeganv2.hf.space/api/predict/';
-            let data = {
-                "data": [
-                    `data:image/jpeg;base64,${base64}`, // Фото в base64
-                    version
-                ]
-            };
-
-            try {
-                let response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                let resultJson = await response.json();
-                let animeBase64 = resultJson.data[0].split(',')[1]; // Получаем base64 от API
-
-                // Показываем результат
-                let result = document.getElementById('result');
-                let img = document.createElement('img');
-                img.src = `data:image/png;base64,${animeBase64}`;
-                img.classList.add('result-img');
-                result.appendChild(img);
-            } catch (error) {
-                alert('Ошибка: ' + error.message);
-            }
-        };
-    }
-
-    // Генерация частиц (аниме-эффект)
-    function createParticles() {
-        let particlesContainer = document.querySelector('.particles');
-        for (let i = 0; i < 50; i++) { // 50 частиц
-            let particle = document.createElement('div');
-            particle.classList.add('particle');
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 10 + 's';
-            particle.style.background = `hsl(${Math.random() * 360}, 100%, 80%)`; // Разные цвета
-            particlesContainer.appendChild(particle);
-        }
-    }
-    createParticles(); // Запускаем частицы
-
-    // JS для FAQ (аккордеон)
-    document.querySelectorAll('.faq-question').forEach(item => {
-        item.addEventListener('click', () => {
-            item.parentElement.classList.toggle('active');
         });
-    });
 
-    // JS для модального окна (откроется, например, после 3 генераций)
-    function openModal() {
-        document.getElementById('reg-modal').style.display = 'flex';
-    }
+        // Выбор стиля
+        function selectStyle(style) {
+            selectedStyle = style;
+            document.querySelectorAll('.style-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            alert(Выбран стиль: ${style.charAt(0).toUpperCase() + style.slice(1)});
+        }
 
-    function closeModal() {
-        document.getElementById('reg-modal').style.display = 'none';
-    }
+        // Функция генерации
+        async function го() {
+            let file = document.getElementById('фото').files[0];
+            if (!file) return alert('Загрузи фото сначала!');
+            if (!selectedStyle) return alert('Выбери стиль аниме!');
 
-    // Пример: Открой модалку после клика на кнопку генерации (добавь в функцию го())
-    /* В конце функции го() добавь: if (/* условие, типа попыток >3 */) openModal(); */
+            // Определяем версию на основе стиля
+            let version;
+            if (selectedStyle === 'naruto') {
+                version = 'v2'; // Более реалистичный стиль
+            } else if (selectedStyle === 'jojo') {
+                version = 'v1'; // Более стилизованный
+            } else if (selectedStyle === 'onepiece') {
+                version = 'v2'; // Более реалистичный
+            }
 
-    // Ещё анимации для галереи (опционально)
-    document.querySelectorAll('.gallery-item').forEach((item, index) => {
-        item.style.animationDelay = `${index * 0.2}s`;
-    });
+            // Конвертируем файл в base64
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async function() {
+                let base64 = reader.result.split(',')[1]; // Только base64 часть
 
-    // Авто-открытие модалки через 10 секунд (для теста)
-    setTimeout(openModal, 10000); // Убери потом
-</script>
+                // Подготавливаем запрос
+                let apiUrl = 'https://akhaliq-animeganv2.hf.space/api/predict/';
+                let data = {
+                    "data": [
+                        data:image/jpeg;base64,${base64}, // Фото в base64
+                        version
+                    ]
+                };
+
+                try {
+                    let response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    let resultJson = await response.json();
+                    if (resultJson.data && resultJson.data[0]) {
+                        let animeBase64 = resultJson.data[0].split(',')[1]; // Получаем base64 от API
+
+                        // Показываем результат
+                        let result = document.getElementById('result');
+                        let img = document.createElement('img');
+                        img.src = data:image/png;base64,${animeBase64};
+                        img.classList.add('result-img');
+                        result.appendChild(img);
+
+                        // Добавляем кнопку скачивания
+                        let downloadBtn = document.createElement('a');
+                        downloadBtn.href = img.src;
+                        downloadBtn.download = anime_${selectedStyle}.png;
+                        downloadBtn.textContent = 'Скачать аниме-фото';
+                        downloadBtn.style.display = 'block';
+                        downloadBtn.style.margin = '20px auto';
+                        downloadBtn.style.padding = '10px 20px';
+                        downloadBtn.style.background = '#ff6b6b';
+                        downloadBtn.style.color = 'white';
+                        downloadBtn.style.textDecoration = 'none';
+                        downloadBtn.style.borderRadius = '20px';
+                        result.appendChild(downloadBtn);
+                    } else {
+                        alert('Ошибка: API не вернул изображение. Попробуй снова.');
+                    }
+                } catch (error) {
+                    alert('Ошибка: ' + error.message);
+                }
+            };
+        }
+
+        // Генерация частиц (аниме-эффект)
+        function createParticles() {
+            let particlesContainer = document.querySelector('.particles');
+            for (let i = 0; i < 50; i++) { // 50 частиц
+                let particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.background = hsl(${Math.random() * 360}, 100%, 80%); // Разные цвета
+                particlesContainer.appendChild(particle);
+            }
+        }
+        createParticles(); // Запускаем частицы
+
+        // JS для FAQ (аккордеон)
+        document.querySelectorAll('.faq-question').forEach(item => {
+            item.addEventListener('click', () => {
+                item.parentElement.classList.toggle('active');
+            });
+        });
+
+        // JS для модального окна
+        function openModal() {
+            document.getElementById('reg-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('reg-modal').style.display = 'none';
+        }
+
+        // Анимации для галереи
+        document.querySelectorAll('.gallery-item').forEach((item, index) => {
+            item.style.animationDelay = ${index * 0.2}s;
+        });
+
+        // Авто-открытие модалки через 10 секунд (для теста, убери позже)
+        setTimeout(openModal, 10000);
+    </script>
 </body>
 </html>
-
