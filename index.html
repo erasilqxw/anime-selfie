@@ -1741,6 +1741,251 @@
         document.querySelectorAll('img[data-src]').forEach(img => {
             img.src = img.dataset.src;
         });
-   </script>
+  <!-- Additional Styles for Sixth Part -->
+    <style>
+        /* Improved Preloader */
+        .preloader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+        }
+
+        .preloader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #ff00ff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Result Section */
+        .result-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .result-section img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-button, .share-x-button {
+            background: #ff00ff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .download-button:hover, .share-x-button:hover {
+            background: #cc00cc;
+        }
+    </style>
+
+    <!-- Update Uploader Section -->
+    <section id="uploader" class="uploader">
+        <h2>Upload & Convert to Anime</h2>
+        <form class="upload-form" aria-label="Image upload form">
+            <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+                <p>Drag & Drop or Click to Upload</p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" onchange="previewImage(event)" aria-label="Upload image">
+            <select id="anime-style" aria-label="Select anime style">
+                <option value="anime">General Anime</option>
+                <option value="naruto">Naruto</option>
+                <option value="jojo">JoJo's Bizarre Adventure</option>
+                <option value="sailor-moon">Sailor Moon</option>
+            </select>
+            <button type="button" class="upload-button" onclick="processImage()">Convert to Anime</button>
+        </form>
+        <div id="preview" class="result-section">
+            <div class="image-container">
+                <h3>Original</h3>
+                <img id="originalPreview" alt="Original uploaded image">
+            </div>
+            <div class="image-container">
+                <h3>Anime Version</h3>
+                <img id="animePreview" alt="Anime converted image" data-src="">
+                <div class="loader"></div>
+            </div>
+            <div class="result-section" id="result-actions" style="display: none;">
+                <button class="download-button" onclick="downloadImage()">Download</button>
+                <button class="share-x-button" onclick="shareToX()">Share to X</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Preloader Overlay -->
+    <div class="preloader-overlay" id="preloader-overlay">
+        <div class="preloader"></div>
+    </div>
+
+    <!-- Additional JavaScript -->
+    <script>
+        // Update previewImage to show loader
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.getElementById('originalPreview');
+                    img.src = e.target.result;
+                    img.classList.add('loaded');
+                    document.querySelector('#preview .loader').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Process Image with Replicate API
+        async function processImage() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const style = document.getElementById('anime-style').value;
+            if (!file) return alert('Please upload an image!');
+
+            // Show preloader
+            const preloader = document.getElementById('preloader-overlay');
+            preloader.style.display = 'flex';
+
+            // Convert to base64
+            const base64 = await new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(file);
+            });
+
+            // Style prompts
+            const stylePrompts = {
+                anime: 'high-quality anime style, vibrant colors, detailed backgrounds',
+                naruto: 'Naruto anime style, bold lines, orange and blue tones',
+                jojo: 'JoJo Bizarre Adventure style, dramatic poses, vivid colors',
+                'sailor-moon': 'Sailor Moon style, magical girl aesthetic, sparkles'
+            };
+
+            try {
+                // Step 1: Upload to Cloudinary first (Replicate needs public URL)
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', 'your_upload_preset'); // Замени на свой
+                const cloudinaryResponse = await fetch(https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload, {
+                    method: 'POST',
+                    body: formData
+                });
+                const cloudinaryData = await cloudinaryResponse.json();
+                const imageUrl = cloudinaryData.secure_url;
+
+                // Step 2: Send to Replicate
+                const replicateResponse = await fetch('https://api.replicate.com/v1/predictions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': Token ${REPLICATE_API_TOKEN},
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        version: 'stablediffusion', // Используем Stable Diffusion модель
+                        input: {
+                            image: imageUrl,
+                            prompt: Convert to ${stylePrompts[style]}, masterpiece, 4k resolution,
+                            negative_prompt: 'blurry, lowres, deformed',
+                            num_inference_steps: 30,
+                            guidance_scale: 7.5
+                        }
+                    })
+                });
+
+                if (!replicateResponse.ok) throw new Error('Replicate API error');
+                const prediction = await replicateResponse.json();
+
+                // Step 3: Poll for result
+                let result;
+                for (let i = 0; i < 30; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s
+                    const statusResponse = await fetch(https://api.replicate.com/v1/predictions/${prediction.id}, {
+                        headers: { 'Authorization': Token ${REPLICATE_API_TOKEN} }
+                    });
+                    result = await statusResponse.json();
+                    if (result.status === 'succeeded') break;
+                    if (result.status === 'failed') throw new Error('Conversion failed');
+                }
+
+                if (!result.output) throw new Error('No output from Replicate');
+
+                // Step 4: Upload result to Cloudinary
+                const resultBlob = await (await fetch(result.output[0])).blob();
+                const resultFormData = new FormData();
+                resultFormData.append('file', resultBlob, 'anime-output.jpg');
+                resultFormData.append('upload_preset', 'your_upload_preset');
+                const resultCloudinaryResponse = await fetch(https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload, {
+                    method: 'POST',
+                    body: resultFormData
+                });
+                const resultCloudinaryData = await resultCloudinaryResponse.json();
+                const animeUrl = resultCloudinaryData.secure_url;
+
+                // Step 5: Display result
+                const animeImg = document.getElementById('animePreview');
+                animeImg.src = animeUrl;
+                animeImg.classList.add('loaded');
+                gsap.from(animeImg, { duration: 1, scale: 0.8, opacity: 0, ease: 'elastic.out(1, 0.5)' });
+
+                // Show action buttons
+                document.getElementById('result-actions').style.display = 'block';
+
+                // Save to history
+                addToHistory(base64, animeUrl);
+            } catch (error) {
+                console.error(error);
+                alert('Error converting image. Check API tokens or network.');
+                document.getElementById('animePreview').src = 'https://via.placeholder.com/300?text=Error';
+            } finally {
+                preloader.style.display = 'none';
+            }
+        }
+
+        // Download Image
+        function downloadImage() {
+            const animeUrl = document.getElementById('animePreview').src;
+            const link = document.createElement('a');
+            link.href = animeUrl;
+            link.download = 'anime-converted.jpg';
+            link.click();
+        }
+
+        // Share to X
+        async function shareToX() {
+            const animeUrl = document.getElementById('animePreview').src;
+            try {
+                const response = await fetch('/api/share-to-x', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: 'Check out my anime-style photo created with Anime Converter! #AnimeArt',
+                        media_url: animeUrl
+                    })
+                });
+                if (response.ok) alert('Shared to X!');
+                else throw new Error('Share failed');
+            } catch (error) {
+                console.error(error);
+                alert('Error sharing to X. Check API setup.');
+            }
+        }
+
+        // Add to nav
+        document.querySelector('.nav-links').innerHTML += <li><a href="#uploader">Converter</a></li>;
+  </script>
 </body>
 </html>
