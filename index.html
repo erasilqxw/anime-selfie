@@ -1546,6 +1546,201 @@
 
         // Init SPA to show home
         navigateTo('home');
- </script>
+ <!-- Swiper.js CDN for Slider -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" async></script>
+
+    <!-- Additional Pro Styles for Fourth Part -->
+    <style>
+        /* Anime Theme Upgrades */
+        body.anime-theme {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+        }
+
+        body.anime-theme .hero {
+            background-image: url('https://pbs.twimg.com/media/G2n1xQWXUAAuG5f.jpg'); /* Example anime bg */
+            background-blend-mode: overlay;
+        }
+
+        .neon-glow {
+            box-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
+            transition: box-shadow 0.3s;
+        }
+
+        .neon-glow:hover {
+            box-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
+        }
+
+        /* Enhanced Gallery with Slider */
+        .anime-gallery {
+            padding: 100px 20px;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .swiper {
+            width: 100%;
+            height: 500px;
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.5s;
+        }
+
+        .swiper-slide:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Filters */
+        .filters {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            background: #4a90e2;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #ff00ff;
+        }
+
+        /* More Optimizations */
+        img[data-src] {
+            loading: lazy;
+        }
+    </style>
+
+    <!-- New Section: Anime Gallery Pro -->
+    <section id="anime-gallery" class="anime-gallery hidden">
+        <h2>Anime Characters Gallery</h2>
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="azur-lane">Azur Lane</button>
+            <button class="filter-btn" data-filter="honkai">Honkai Star Rail</button>
+            <button class="filter-btn" data-filter="kaguya">Kaguya-Sama</button>
+            <button class="filter-btn" data-filter="sailor-moon">Sailor Moon</button>
+        </div>
+        <div class="swiper">
+            <div class="swiper-wrapper">
+                <!-- Anime Images from Search -->
+                <div class="swiper-slide" data-category="azur-lane">
+                    <img data-src="https://pbs.twimg.com/media/G2n1xQWXUAAuG5f.jpg" alt="Bremerton from Azur Lane - thicc anime girl art">
+                </div>
+                <div class="swiper-slide" data-category="azur-lane">
+                    <img data-src="https://pbs.twimg.com/media/G2n1xQKWkAAC9Zk.jpg" alt="Bremerton variant from Azur Lane">
+                </div>
+                <div class="swiper-slide" data-category="general">
+                    <img data-src="https://pbs.twimg.com/media/G2sgTg4bIAAT89X.jpg" alt="3D anime figure transformation">
+                </div>
+                <div class="swiper-slide" data-category="general">
+                    <img data-src="https://pbs.twimg.com/media/G2sgTg4bIAYH_Oj.jpg" alt="AI-generated anime merch">
+                </div>
+                <div class="swiper-slide" data-category="honkai">
+                    <img data-src="https://pbs.twimg.com/media/G2q7bU5XMAAKBYy.jpg" alt="Kafka from Honkai Star Rail">
+                </div>
+                <div class="swiper-slide" data-category="honkai">
+                    <img data-src="https://pbs.twimg.com/media/G2q7bVCXMAAZCz1.jpg" alt="Kafka variant 1">
+                </div>
+                <div class="swiper-slide" data-category="honkai">
+                    <img data-src="https://pbs.twimg.com/media/G2q7bU9XMAkvCiq.jpg" alt="Kafka variant 2">
+                </div>
+                <div class="swiper-slide" data-category="honkai">
+                    <img data-src="https://pbs.twimg.com/media/G2q7bU-XMAIJqLy.jpg" alt="Kafka variant 3">
+                </div>
+                <div class="swiper-slide" data-category="azur-lane">
+                    <img data-src="https://pbs.twimg.com/media/G2n1sH_XYAAV1rd.jpg" alt="Bremerton thicc art">
+                </div>
+                <div class="swiper-slide" data-category="azur-lane">
+                    <img data-src="https://pbs.twimg.com/media/G2n1sIRXYAAGS76.jpg" alt="Bremerton alternative">
+                </div>
+                <div class="swiper-slide" data-category="kaguya">
+                    <img data-src="https://pbs.twimg.com/media/G2bhAj2XoAAf0IT.jpg" alt="Kaguya Shinomiya from Kaguya-Sama">
+                </div>
+                <div class="swiper-slide" data-category="kaguya">
+                    <img data-src="https://pbs.twimg.com/media/G2bhAj7XwAASNGw.jpg" alt="Kaguya variant 1">
+                </div>
+                <div class="swiper-slide" data-category="general">
+                    <img data-src="https://pbs.twimg.com/media/G2UPZgyawAAIzHc.jpg" alt="Ecchi anime character">
+                </div>
+                <div class="swiper-slide" data-category="general">
+                    <img data-src="https://pbs.twimg.com/media/G2SuDAHbQAAoztQ.jpg" alt="3D anime art">
+                </div>
+                <div class="swiper-slide" data-category="sailor-moon">
+                    <img data-src="https://pbs.twimg.com/media/G2NnevzX0AApSh5.jpg" alt="Makoto Kino from Sailor Moon">
+                </div>
+                <div class="swiper-slide" data-category="general">
+                    <img data-src="https://pbs.twimg.com/media/G2LYA-hXYAAprjC.jpg" alt="Ctholly anime character comparison">
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </section>
+
+    <!-- Additional JavaScript for Fourth Part -->
+    <script>
+        // Toggle Anime Theme
+        function toggleAnimeTheme() {
+            document.body.classList.toggle('anime-theme');
+            localStorage.setItem('animeTheme', document.body.classList.contains('anime-theme'));
+        }
+
+        if (localStorage.getItem('animeTheme') === 'true') {
+            toggleAnimeTheme();
+        }
+
+        // Add to nav
+        document.querySelector('.nav-links').innerHTML += <li><a href="#anime-gallery">Anime Gallery</a></li><li><a href="#" onclick="toggleAnimeTheme()">Anime Theme</a></li>;
+
+        // Swiper Slider Init
+        const swiper = new Swiper('.swiper', {
+            loop: true,
+            autoplay: { delay: 3000 },
+            pagination: { el: '.swiper-pagination', clickable: true },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            slidesPerView: 1,
+            breakpoints: {
+                640: { slidesPerView: 2, spaceBetween: 20 },
+                1024: { slidesPerView: 4, spaceBetween: 40 }
+            }
+        });
+
+        // Gallery Filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+                document.querySelectorAll('.swiper-slide').forEach(slide => {
+                    if (filter === 'all' || slide.dataset.category === filter) {
+                        slide.style.display = 'block';
+                    } else {
+                        slide.style.display = 'none';
+                    }
+                });
+                swiper.update(); // Update swiper after filter
+            });
+        });
+
+        // GSAP Animations for Gallery
+        gsap.from('.swiper-slide', { duration: 1, stagger: 0.1, opacity: 0, y: 50, ease: 'power3.out' });
+
+        // Lazy Loading (already in prev, but ensure)
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            img.src = img.dataset.src;
+        });
+   </script>
 </body>
 </html>
