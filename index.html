@@ -3,1989 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Style Converter</title>
+    <title>Pixel World - Draw on the Map</title>
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         /* Global Styles */
         body {
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
-            color: #333;
-            overflow-x: hidden;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
         }
 
-        /* Header Styles */
+        /* Header */
         header {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
             position: fixed;
-            width: 100%;
             top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
             z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background 0.3s ease;
-        }
-
-        header:hover {
-            background: rgba(255, 255, 255, 1);
-        }
-
-        nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
         }
 
         .logo {
             font-size: 24px;
             font-weight: bold;
-            color: #4a90e2;
-            text-decoration: none;
-            transition: color 0.3s ease;
+            color: #00ff00;
         }
 
-        .logo:hover {
-            color: #357abd;
-        }
-
-        .nav-links {
-            list-style: none;
+        .tools {
             display: flex;
-            margin: 0;
-            padding: 0;
+            gap: 10px;
         }
 
-        .nav-links li {
-            margin-left: 20px;
+        .tool-btn {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
         }
 
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s ease, transform 0.3s ease;
+        .tool-btn:hover, .tool-btn.active {
+            background: #00ff00;
+            color: #000;
         }
 
-        .nav-links a:hover {
-            color: #4a90e2;
-            transform: scale(1.05);
+        .color-picker {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
         }
 
-        /* Hero Section */
-        .hero {
+        /* Map Container */
+        #map {
             height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: url('https://via.placeholder.com/1920x1080?text=Anime+Background') no-repeat center/cover;
-            color: white;
-            position: relative;
+            width: 100%;
         }
 
-        .hero::before {
-            content: '';
+        /* Pixel Canvas Overlay */
+        #pixelCanvas {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1;
+            pointer-events: none;
+            z-index: 1001;
+            opacity: 0.8;
         }
 
-        .hero-content {
-            z-index: 2;
-            max-width: 800px;
-            padding: 20px;
-        }
-
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            animation: fadeInDown 1s ease;
-        }
-
-        .hero p {
-            font-size: 20px;
-            margin-bottom: 30px;
-            animation: fadeInUp 1s ease 0.5s;
-        }
-
-        .cta-button {
-            background: #4a90e2;
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.3s ease;
-            animation: bounceIn 1s ease 1s;
-        }
-
-        .cta-button:hover {
-            background: #357abd;
-            transform: translateY(-5px);
-        }
-
-        /* Uploader Section */
-        .uploader {
-            padding: 100px 20px;
-            background: white;
-            text-align: center;
-        }
-
-        .uploader h2 {
-            font-size: 36px;
-            margin-bottom: 40px;
-            color: #4a90e2;
-        }
-
-        .upload-form {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #f9f9f9;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .upload-form:hover {
-            transform: scale(1.02);
-        }
-
-        .drop-zone {
-            border: 2px dashed #4a90e2;
-            border-radius: 10px;
-            padding: 50px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .drop-zone:hover {
-            background: #e6f0fa;
-        }
-
-        .drop-zone p {
-            margin: 0;
-            font-size: 18px;
-            color: #666;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .upload-button {
-            background: #4a90e2;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background 0.3s ease;
-        }
-
-        .upload-button:hover {
-            background: #357abd;
-        }
-
-        #preview {
-            margin-top: 30px;
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .image-container {
-            width: 45%;
-        }
-
-        .image-container img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .image-container img:hover {
-            transform: scale(1.05);
-        }
-
-        /* Features Section */
-        .features {
-            padding: 100px 20px;
-            background: #f0f4f8;
-            text-align: center;
-        }
-
-        .features h2 {
-            font-size: 36px;
-            margin-bottom: 60px;
-            color: #333;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .feature:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-        }
-
-        .feature i {
-            font-size: 48px;
-            color: #4a90e2;
-            margin-bottom: 20px;
-        }
-
-        .feature h3 {
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .feature p {
-            font-size: 16px;
-            color: #666;
-        }
-
-        /* Gallery Section */
-        .gallery {
-            padding: 100px 20px;
-            background: white;
-            text-align: center;
-        }
-
-        .gallery h2 {
-            font-size: 36px;
-            margin-bottom: 60px;
-            color: #4a90e2;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item:hover {
-            transform: scale(1.05);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-
-        .overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
+        /* Instructions */
+        .instructions {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
             padding: 10px;
-            text-align: center;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item:hover .overlay {
-            transform: translateY(0);
-        }
-
-        /* Testimonials Section */
-        .testimonials {
-            padding: 100px 20px;
-            background: #f0f4f8;
-            text-align: center;
-        }
-
-        .testimonials h2 {
-            font-size: 36px;
-            margin-bottom: 60px;
-            color: #333;
-        }
-
-        .testimonial-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .testimonial {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            position: relative;
-        }
-
-        .testimonial::before {
-            content: '"';
-            font-size: 100px;
-            color: #4a90e2;
-            position: absolute;
-            top: -20px;
-            left: 20px;
-            opacity: 0.2;
-        }
-
-        .testimonial p {
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-
-        .author {
-            display: flex;
-            align-items: center;
-        }
-
-        .author img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-        }
-
-        .author-info h4 {
-            margin: 0;
-            font-size: 18px;
-        }
-
-        .author-info p {
-            margin: 0;
-            font-size: 14px;
-            color: #666;
-        }
-
-        /* Pricing Section */
-        .pricing {
-            padding: 100px 20px;
-            background: white;
-            text-align: center;
-        }
-
-        .pricing h2 {
-            font-size: 36px;
-            margin-bottom: 60px;
-            color: #4a90e2;
-        }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .plan {
-            background: #f9f9f9;
-            padding: 40px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .plan:hover {
-            transform: translateY(-10px);
-        }
-
-        .plan h3 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .price {
-            font-size: 36px;
-            color: #4a90e2;
-            margin-bottom: 20px;
-        }
-
-        .price span {
-            font-size: 18px;
-            color: #666;
-        }
-
-        .features-list {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 30px;
-        }
-
-        .features-list li {
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .signup-button {
-            background: #4a90e2;
-            color: white;
-            padding: 10px 20px;
-            border: none;
             border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
+            font-size: 14px;
+            z-index: 999;
         }
 
-        .signup-button:hover {
-            background: #357abd;
+        /* Zoom Controls (Custom) */
+        .zoom-controls {
+            position: fixed;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 1002;
         }
 
-        /* Contact Section */
-        .contact {
-            padding: 100px 20px;
-            background: #f0f4f8;
-            text-align: center;
-        }
-
-        .contact h2 {
-            font-size: 36px;
-            margin-bottom: 40px;
-            color: #333;
-        }
-
-        .contact-form {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        input, textarea {
-            width: 100%;
+        .zoom-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border: none;
             padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            transition: border 0.3s ease;
-        }
-
-        input:focus, textarea:focus {
-            border-color: #4a90e2;
-        }
-
-        .submit-button {
-            background: #4a90e2;
-            color: white;
-            padding: 15px;
-            border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
-            transition: background 0.3s ease;
+            transition: background 0.3s;
         }
 
-        .submit-button:hover {
-            background: #357abd;
+        .zoom-btn:hover {
+            background: #00ff00;
+            color: #000;
         }
 
-        /* Footer Styles */
-        footer {
-            background: #333;
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .social-links {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .social-links li {
-            margin: 0 10px;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 24px;
-            transition: color 0.3s ease;
-        }
-
-        .social-links a:hover {
-            color: #4a90e2;
-        }
-
-        footer p {
-            margin: 0;
-            font-size: 14px;
-        }
-
-        /* Animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes bounceIn {
-            0% { opacity: 0; transform: scale(0.3); }
-            50% { opacity: 1; transform: scale(1.05); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); }
-        }
-
-        /* Media Queries for Responsiveness */
+        /* Media Queries */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 36px;
+            .tools {
+                flex-wrap: wrap;
             }
-
-            .hero p {
-                font-size: 18px;
-            }
-
-            .nav-links {
-                flex-direction: column;
-            }
-
-            .nav-links li {
-                margin: 10px 0;
-            }
-
-            .feature-grid, .gallery-grid, .testimonial-grid, .pricing-grid {
-                grid-template-columns: 1fr;
+            .instructions {
+                font-size: 12px;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <nav>
-            <a href="#" class="logo">Anime Converter</a>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#uploader">Upload</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#gallery">Gallery</a></li>
-                <li><a href="#testimonials">Testimonials</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
+        <div class="logo">Pixel World</div>
+        <div class="tools">
+            <button class="tool-btn active" id="brushBtn">Brush</button>
+            <button class="tool-btn" id="eraserBtn">Eraser</button>
+            <input type="color" class="color-picker" id="colorPicker" value="#00ff00">
+            <button class="tool-btn" id="clearBtn">Clear</button>
+            <button class="tool-btn" id="saveBtn">Save</button>
+        </div>
     </header>
 
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1>Transform Your Photos into Anime Art</h1>
-            <p>Upload your image and let our AI magic turn it into stunning anime style!</p>
-            <button class="cta-button" onclick="scrollToSection('uploader')">Get Started</button>
-        </div>
-    </section>
+    <div id="map"></div>
+    <canvas id="pixelCanvas"></canvas>
 
-    <section id="uploader" class="uploader">
-        <h2>Upload Your Photo</h2>
-        <form class="upload-form">
-            <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
-                <p>Drag & Drop or Click to Upload</p>
-            </div>
-            <input type="file" id="fileInput" accept="image/*" onchange="previewImage(event)">
-            <button type="button" class="upload-button" onclick="processImage()">Convert to Anime</button>
-        </form>
-        <div id="preview">
-            <div class="image-container">
-                <h3>Original</h3>
-                <img id="originalPreview" alt="Original Image">
-            </div>
-            <div class="image-container">
-                <h3>Anime Version</h3>
-                <img id="animePreview" alt="Anime Image">
-            </div>
-        </div>
-    </section>
-
-    <section id="features" class="features">
-        <h2>Why Choose Us?</h2>
-        <div class="feature-grid">
-            <div class="feature">
-                <i class="fas fa-magic"></i>
-                <h3>AI-Powered Conversion</h3>
-                <p>Advanced AI algorithms to create authentic anime styles.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-bolt"></i>
-                <h3>Fast Processing</h3>
-                <p>Get your results in seconds, no waiting around.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-lock"></i>
-                <h3>Secure & Private</h3>
-                <p>Your images are processed securely and deleted after use.</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-palette"></i>
-                <h3>Custom Styles</h3>
-                <p>Choose from various anime art styles to match your preference.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="gallery" class="gallery">
-        <h2>Gallery of Transformations</h2>
-        <div class="gallery-grid">
-            <div class="gallery-item">
-                <img src="https://via.placeholder.com/300?text=Before" alt="Before">
-                <div class="overlay">Before</div>
-            </div>
-            <div class="gallery-item">
-                <img src="https://via.placeholder.com/300?text=After" alt="After">
-                <div class="overlay">After</div>
-            </div>
-            <!-- Add more gallery items as needed -->
-        </div>
-    </section>
-
-    <section id="testimonials" class="testimonials">
-        <h2>What Our Users Say</h2>
-        <div class="testimonial-grid">
-            <div class="testimonial">
-                <p>"This tool is amazing! Turned my selfie into a cool anime character."</p>
-                <div class="author">
-                    <img src="https://via.placeholder.com/50" alt="User">
-                    <div class="author-info">
-                        <h4>Jane Doe</h4>
-                        <p>Artist</p>
-                    </div>
-                </div>
-            </div>
-            <!-- Add more testimonials -->
-        </div>
-    </section>
-
-    <section id="pricing" class="pricing">
-        <h2>Pricing Plans</h2>
-        <div class="pricing-grid">
-            <div class="plan">
-                <h3>Basic</h3>
-                <div class="price">$0<span>/month</span></div>
-                <ul class="features-list">
-                    <li>5 conversions per day</li>
-                    <li>Standard quality</li>
-                </ul>
-                <button class="signup-button">Sign Up</button>
-            </div>
-            <!-- Add more plans -->
-        </div>
-    </section>
-
-    <section id="contact" class="contact">
-        <h2>Get in Touch</h2>
-        <form class="contact-form">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" required>
-            </div>
-            <div class="form-group">
-                <label for="message">Message</label>
-                <textarea id="message" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="submit-button">Send Message</button>
-        </form>
-    </section>
-
-    <footer>
-        <div class="footer-content">
-            <ul class="social-links">
-                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                <li><a href="#"><i class="fab fa-instagram"></i></a></li>
-                <li><a href="#"><i class="fab fa-facebook"></i></a></li>
-            </ul>
-            <p>&copy; 2025 Anime Converter. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('originalPreview').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function processImage() {
-            // Placeholder for AI processing
-            // In real app, send to backend API, e.g., fetch('/api/convert', { method: 'POST', body: formData })
-            // For now, simulate with a placeholder image
-            document.getElementById('animePreview').src = 'https://via.placeholder.com/300?text=Anime+Version';
-            alert('Image converted! (Simulation)');
-        }
-    <!-- Extended Gallery with Pagination -->
-    <section id="extended-gallery" class="gallery">
-        <h2>Extended Gallery</h2>
-        <div class="gallery-grid" id="extended-gallery-grid">
-            <!-- Dynamically populated via JS -->
-        </div>
-        <div class="pagination">
-            <button onclick="prevPage()">Previous</button>
-            <span id="page-info">Page 1 of 1</span>
-            <button onclick="nextPage()">Next</button>
-        </div>
-    </section>
-
-    <!-- Modal for Image Viewer -->
-    <div id="image-modal" class="modal">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <img class="modal-content" id="modal-image">
-        <div id="caption"></div>
+    <div class="zoom-controls">
+        <button class="zoom-btn" id="zoomIn">+</button>
+        <button class="zoom-btn" id="zoomOut">-</button>
     </div>
 
-    <!-- User Dashboard Section -->
-    <section id="dashboard" class="dashboard">
-        <h2>User Dashboard</h2>
-        <div class="login-form" id="login-form">
-            <h3>Login</h3>
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            <button onclick="login()">Login</button>
-            <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
-        </div>
-        <div class="register-form" id="register-form" style="display: none;">
-            <h3>Register</h3>
-            <input type="text" id="reg-username" placeholder="Username">
-            <input type="email" id="reg-email" placeholder="Email">
-            <input type="password" id="reg-password" placeholder="Password">
-            <button onclick="register()">Register</button>
-            <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
-        </div>
-        <div class="user-panel" id="user-panel" style="display: none;">
-            <h3>Welcome, <span id="user-name"></span></h3>
-            <button onclick="logout()">Logout</button>
-            <div class="history">
-                <h4>Your Conversion History</h4>
-                <ul id="history-list"></ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section id="faq" class="faq">
-        <h2>Frequently Asked Questions</h2>
-        <div class="faq-item">
-            <h3 onclick="toggleFAQ(this)">What is Anime Converter?</h3>
-            <p class="faq-answer">It's an AI tool to transform photos into anime style.</p>
-        </div>
-        <div class="faq-item">
-            <h3 onclick="toggleFAQ(this)">How does the AI work?</h3>
-            <p class="faq-answer">We use advanced models like GANs for style transfer.</p>
-        </div>
-        <div class="faq-item">
-            <h3 onclick="toggleFAQ(this)">Is it free?</h3>
-            <p class="faq-answer">Basic plan is free, premium for unlimited use.</p>
-        </div>
-        <!-- Add more FAQs -->
-    </section>
-
-    <!-- Blog Section -->
-    <section id="blog" class="blog">
-        <h2>Our Blog</h2>
-        <div class="blog-grid">
-            <div class="blog-post">
-                <img src="https://via.placeholder.com/400x200?text=Blog+1" alt="Blog 1">
-                <h3>Top Anime Styles in 2023</h3>
-                <p>Explore the latest trends in anime art.</p>
-                <a href="#">Read More</a>
-            </div>
-            <div class="blog-post">
-                <img src="https://via.placeholder.com/400x200?text=Blog+2" alt="Blog 2">
-                <h3>How AI is Changing Art</h3>
-                <p>Insights into AI-driven creativity.</p>
-                <a href="#">Read More</a>
-            </div>
-            <!-- Add more posts -->
-        </div>
-    </section>
-
-    <!-- Additional Styles for New Sections -->
-    <style>
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 10000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.9);
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            margin: auto;
-            display: block;
-            width: 80%;
-            max-width: 700px;
-            animation: zoom 0.6s;
-        }
-
-        @keyframes zoom {
-            from {transform: scale(0)}
-            to {transform: scale(1)}
-        }
-
-        .close {
-            position: absolute;
-            top: 15px;
-            right: 35px;
-            color: white;
-            font-size: 40px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #bbb;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        #caption {
-            margin: auto;
-            display: block;
-            width: 80%;
-            max-width: 700px;
-            text-align: center;
-            color: #ccc;
-            padding: 10px 0;
-            height: 150px;
-        }
-
-        /* Dashboard Styles */
-        .dashboard {
-            padding: 100px 20px;
-            background: #f9f9f9;
-            text-align: center;
-        }
-
-        .login-form, .register-form, .user-panel {
-            max-width: 400px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        input {
-            display: block;
-            width: 100%;
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        button {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .history ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .history li {
-            margin-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        /* FAQ Styles */
-        .faq {
-            padding: 100px 20px;
-            background: white;
-        }
-
-        .faq-item {
-            max-width: 800px;
-            margin: 0 auto 20px;
-            background: #f0f4f8;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .faq-item h3 {
-            cursor: pointer;
-            padding: 15px;
-            margin: 0;
-            background: #4a90e2;
-            color: white;
-            transition: background 0.3s;
-        }
-
-        .faq-item h3:hover {
-            background: #357abd;
-        }
-
-        .faq-answer {
-            padding: 15px;
-            display: none;
-        }
-
-        /* Blog Styles */
-        .blog {
-            padding: 100px 20px;
-            background: #f0f4f8;
-        }
-
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .blog-post {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-
-        .blog-post:hover {
-            transform: translateY(-10px);
-        }
-
-        .blog-post img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .blog-post h3 {
-            padding: 15px;
-            margin: 0;
-        }
-
-        .blog-post p {
-            padding: 0 15px 15px;
-            color: #666;
-        }
-
-        .blog-post a {
-            display: block;
-            padding: 10px;
-            background: #4a90e2;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-
-        .blog-post a:hover {
-            background: #357abd;
-        }
-
-        /* Pagination Styles */
-        .pagination {
-            margin-top: 20px;
-        }
-
-        .pagination button {
-            padding: 10px 20px;
-            margin: 0 10px;
-            background: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .pagination button:hover {
-            background: #357abd;
-        }
-
-        /* Additional Animations */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .blog-post {
-            animation: slideIn 0.5s ease;
-        }
-    </style>
-
-    <!-- Additional JavaScript for New Features -->
-    <script>
-        // Modal Functions
-        function openModal(src, alt) {
-            document.getElementById('image-modal').style.display = "block";
-            document.getElementById('modal-image').src = src;
-            document.getElementById('caption').innerHTML = alt;
-        }
-
-        function closeModal() {
-            document.getElementById('image-modal').style.display = "none";
-        }
-
-        // FAQ Toggle
-        function toggleFAQ(element) {
-            const answer = element.nextElementSibling;
-            answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
-        }
-
-        // User Auth Simulation (using localStorage)
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            // Simulate check
-            if (username && password) {
-                localStorage.setItem('user', username);
-                showUserPanel(username);
-            } else {
-                alert('Invalid credentials');
-            }
-        }
-
-        function register() {
-            const username = document.getElementById('reg-username').value;
-            const email = document.getElementById('reg-email').value;
-            const password = document.getElementById('reg-password').value;
-            if (username && email && password) {
-                localStorage.setItem('user', username);
-                showUserPanel(username);
-            } else {
-                alert('Fill all fields');
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('user');
-            localStorage.removeItem('history');
-            showLogin();
-        }
-
-        function showRegister() {
-            document.getElementById('login-form').style.display = 'none';
-            document.getElementById('register-form').style.display = 'block';
-        }
-
-        function showLogin() {
-            document.getElementById('register-form').style.display = 'none';
-            document.getElementById('login-form').style.display = 'block';
-            document.getElementById('user-panel').style.display = 'none';
-        }
-
-        function showUserPanel(username) {
-            document.getElementById('login-form').style.display = 'none';
-            document.getElementById('register-form').style.display = 'none';
-            document.getElementById('user-panel').style.display = 'block';
-            document.getElementById('user-name').innerText = username;
-            loadHistory();
-        }
-
-        // History Management
-        let history = JSON.parse(localStorage.getItem('history')) || [];
-
-        function addToHistory(original, anime) {
-            history.push({ original, anime, date: new Date().toLocaleString() });
-            localStorage.setItem('history', JSON.stringify(history));
-            loadHistory();
-        }
-
-        function loadHistory() {
-            const list = document.getElementById('history-list');
-            list.innerHTML = '';
-            history.forEach(item => {
-                const li = document.createElement('li');
-                li.innerHTML = ${item.date}: <a href="#" onclick="openModal('${item.original}', 'Original')">Original</a> -> <a href="#" onclick="openModal('${item.anime}', 'Anime')">Anime</a>;
-                list.appendChild(li);
-            });
-        }
-
-        // Override processImage to add to history
-        const originalProcessImage = processImage;
-        processImage = function() {
-            // Simulate anime URL
-            const animeSrc = 'https://via.placeholder.com/300?text=Anime+Version+' + Math.random();
-            document.getElementById('animePreview').src = animeSrc;
-            const originalSrc = document.getElementById('originalPreview').src;
-            addToHistory(originalSrc, animeSrc);
-            alert('Image converted! (Simulation with history)');
-            // In real: fetch API and add response URL
-        };
-
-        // Pagination for Extended Gallery
-        const galleryItems = [
-            { src: 'https://via.placeholder.com/300?text=Ext+1', alt: 'Extended 1' },
-            { src: 'https://via.placeholder.com/300?text=Ext+2', alt: 'Extended 2' },
-            // Add more items, say 20 for pagination
-            ...Array.from({length: 18}, (_, i) => ({ src: https://via.placeholder.com/300?text=Ext+${i+3}, alt: Extended ${i+3} }))
-        ];
-
-        let currentPage = 1;
-        const itemsPerPage = 6;
-
-        function renderGallery(page) {
-            const grid = document.getElementById('extended-gallery-grid');
-            grid.innerHTML = '';
-            const start = (page - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            galleryItems.slice(start, end).forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'gallery-item';
-                div.innerHTML = <img src="${item.src}" alt="${item.alt}" onclick="openModal('${item.src}', '${item.alt}')"><div class="overlay">${item.alt}</div>;
-                grid.appendChild(div);
-            });
-            document.getElementById('page-info').innerText = Page ${page} of ${Math.ceil(galleryItems.length / itemsPerPage)};
-        }
-
-        function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderGallery(currentPage);
-            }
-        }
-
-        function nextPage() {
-            if (currentPage < Math.ceil(galleryItems.length / itemsPerPage)) {
-                currentPage++;
-                renderGallery(currentPage);
-            }
-        }
-
-        // Init
-        if (localStorage.getItem('user')) {
-            showUserPanel(localStorage.getItem('user'));
-        }
-        renderGallery(1);
-
-        // Add nav links for new sections
-        document.querySelector('.nav-links').innerHTML += `
-            <li><a href="#extended-gallery">Extended Gallery</a></li>
-            <li><a href="#dashboard">Dashboard</a></li>
-            <li><a href="#faq">FAQ</a></li>
-            <li><a href="#blog">Blog</a></li>
-        `;
-    <!-- Professional Additions: SEO Meta Tags -->
-    <meta name="description" content="Professional AI-powered photo to anime converter. Transform images into stunning anime art instantly.">
-    <meta name="keywords" content="anime converter, photo to anime, AI image style transfer, anime art generator">
-    <meta property="og:title" content="Anime Style Converter">
-    <meta property="og:description" content="Turn your photos into anime masterpieces with AI.">
-    <meta property="og:image" content="https://via.placeholder.com/1200x630?text=Anime+Converter">
-    <meta property="og:url" content="https://your-site.vercel.app">
-    <meta name="twitter:card" content="summary_large_image">
-
-    <!-- PWA Manifest and Service Worker -->
-    <link rel="manifest" href="/manifest.json">
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(reg => console.log('SW registered', reg));
-            });
-        }
-    </script>
-
-    <!-- External Libs for Pro Features: GSAP for animations, jspdf for export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-    <!-- Additional Styles for Pro Features -->
-    <style>
-        /* Dark Mode */
-        body.dark-mode {
-            background: linear-gradient(135deg, #1e1e1e, #333);
-            color: #ddd;
-        }
-
-        body.dark-mode header {
-            background: rgba(0, 0, 0, 0.9);
-        }
-
-        body.dark-mode .hero {
-            color: #ddd;
-        }
-
-        /* Anime Theme Enhancements */
-        .anime-effect {
-            filter: drop-shadow(0 0 10px #4a90e2);
-            transition: filter 0.3s;
-        }
-
-        .anime-effect:hover {
-            filter: drop-shadow(0 0 20px #357abd);
-        }
-
-        /* Lazy Loading */
-        img.lazy {
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        img.lazy.loaded {
-            opacity: 1;
-        }
-
-        /* SPA Routing Hidden Sections */
-        section.hidden {
-            display: none;
-        }
-
-        /* Advanced Uploader */
-        .progress-bar {
-            width: 100%;
-            height: 5px;
-            background: #ddd;
-            margin-top: 10px;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: #4a90e2;
-            width: 0;
-            transition: width 0.3s;
-        }
-
-        /* Accessibility */
-        [aria-hidden="true"] {
-            display: none;
-        }
-
-        button:focus, a:focus {
-            outline: 2px solid #4a90e2;
-        }
-    </style>
-
-    <!-- New Sections: About, Privacy Policy for Pro Site -->
-    <section id="about" class="about hidden">
-        <h2>About Us</h2>
-        <p>We are a professional AI platform specializing in image transformations. Powered by cutting-edge models from Hugging Face.</p>
-    </section>
-
-    <section id="privacy" class="privacy hidden">
-        <h2>Privacy Policy</h2>
-        <p>Your images are processed securely and not stored without consent. We comply with GDPR and CCPA.</p>
-    </section>
-
-    <!-- Additional JavaScript for Pro Features -->
-    <script>
-        // Dark Mode Toggle
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-        }
-
-        if (localStorage.getItem('darkMode') === 'true') {
-            toggleDarkMode();
-        }
-
-        // Add to nav
-        document.querySelector('.nav-links').innerHTML += <li><a href="#" onclick="toggleDarkMode()">Dark Mode</a></li>;
-
-        // SPA Routing
-        function navigateTo(sectionId) {
-            document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(sectionId).classList.remove('hidden');
-            window.scrollTo(0, 0);
-            history.pushState({ section: sectionId }, '', #${sectionId});
-        }
-
-        window.addEventListener('popstate', (e) => {
-            if (e.state && e.state.section) {
-                navigateTo(e.state.section);
-            }
-        });
-
-        // Update nav links for SPA
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const id = link.getAttribute('href').slice(1);
-                navigateTo(id);
-            });
-        });
-
-        // GSAP Animations
-        gsap.from('.hero-content', { duration: 1, y: 50, opacity: 0, ease: 'power3.out' });
-        gsap.from('.feature', { duration: 0.8, stagger: 0.2, y: 30, opacity: 0, ease: 'power2.out' });
-
-        // Lazy Loading Images
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            img.classList.add('lazy');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        img.src = img.dataset.src;
-                        img.classList.add('loaded');
-                        observer.unobserve(img);
-                    }
-                });
-            });
-            observer.observe(img);
-        });
-
-        // Real AI Processing with Hugging Face API
-        async function processImage() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            if (!file) return alert('Upload an image first!');
-
-            // Convert file to base64
-            const base64 = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.readAsDataURL(file);
-            });
-
-            // Show progress
-            const progressFill = document.createElement('div');
-            progressFill.className = 'progress-fill';
-            const progressBar = document.createElement('div');
-            progressBar.className = 'progress-bar';
-            progressBar.appendChild(progressFill);
-            document.querySelector('.upload-form').appendChild(progressBar);
-
-            // API Call - Replace 'your_hf_token' with actual token
-            const hfToken = 'your_hf_token'; // Get from https://huggingface.co/settings/tokens
-            const model = 'andite/anything-v4.0'; // Anime-specialized img2img model
-            try {
-                const response = await fetch(https://api-inference.huggingface.co/models/${model}, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': Bearer ${hfToken},
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        inputs: base64, // Base64 image
-                        parameters: {
-                            prompt: 'masterpiece, best quality, anime style, vibrant colors, detailed',
-                            negative_prompt: 'blurry, lowres, deformed',
-                            num_inference_steps: 20,
-                            guidance_scale: 7.5,
-                            strength: 0.6 // Transformation strength
-                        }
-                    })
-                });
-
-                if (!response.ok) throw new Error('API error');
-
-                const blob = await response.blob();
-                const animeUrl = URL.createObjectURL(blob);
-                document.getElementById('animePreview').src = animeUrl;
-
-                // Animate reveal
-                gsap.from('#animePreview', { duration: 1, scale: 0.8, opacity: 0, ease: 'elastic.out(1, 0.5)' });
-
-                // Add to history
-                const originalSrc = document.getElementById('originalPreview').src;
-                addToHistory(originalSrc, animeUrl);
-
-                alert('Image converted to anime style!');
-            } catch (error) {
-                console.error(error);
-                alert('Error converting image. Check token or model availability.');
-            } finally {
-                progressBar.remove();
-            }
-        }
-
-        // IndexedDB for Persistent History (better than localStorage for large data)
-        let db;
-        const dbRequest = indexedDB.open('AnimeConverterDB', 1);
-        dbRequest.onupgradeneeded = (e) => {
-            db = e.target.result;
-            db.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
-        };
-        dbRequest.onsuccess = (e) => {
-            db = e.target.result;
-            loadHistory();
-        };
-
-        function addToHistory(original, anime) {
-            const tx = db.transaction('history', 'readwrite');
-            const store = tx.objectStore('history');
-            store.add({ original, anime, date: new Date().toLocaleString() });
-            tx.oncomplete = loadHistory;
-        }
-
-        function loadHistory() {
-            const tx = db.transaction('history', 'readonly');
-            const store = tx.objectStore('history');
-            const req = store.getAll();
-            req.onsuccess = (e) => {
-                const list = document.getElementById('history-list');
-                list.innerHTML = '';
-                e.target.result.forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerHTML = ${item.date}: <a href="#" onclick="openModal('${item.original}', 'Original')">Original</a> -> <a href="#" onclick="openModal('${item.anime}', 'Anime')">Anime</a> <button onclick="exportToPDF(${item.id})">Export PDF</button>;
-                    list.appendChild(li);
-                });
-            };
-        }
-
-        // Export to PDF
-        function exportToPDF(id) {
-            const tx = db.transaction('history', 'readonly');
-            const store = tx.objectStore('history');
-            const req = store.get(id);
-            req.onsuccess = async (e) => {
-                const { original, anime } = e.target.result;
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                doc.text('Anime Conversion', 10, 10);
-
-                // Load images to canvas for PDF
-                const loadImg = (src) => new Promise(resolve => {
-                    const img = new Image();
-                    img.onload = () => resolve(img);
-                    img.src = src;
-                });
-
-                const origImg = await loadImg(original);
-                doc.addImage(origImg, 'JPEG', 10, 20, 80, 80, 'Original');
-
-                const animeImg = await loadImg(anime);
-                doc.addImage(animeImg, 'JPEG', 100, 20, 80, 80, 'Anime');
-
-                doc.save('anime-conversion.pdf');
-            };
-        }
-
-        // Web Worker for Background Tasks (e.g., image processing prep)
-        const worker = new Worker(URL.createObjectURL(new Blob([`
-            self.onmessage = (e) => {
-                // Simulate heavy prep (e.g., resize image)
-                postMessage('Processed');
-            };
-        `], { type: 'application/javascript' })));
-
-        worker.onmessage = (e) => console.log('Worker done:', e.data);
-
-        // Analytics Placeholder (e.g., Google Analytics)
-        // Add your GA script here
-
-        // Add nav for new sections
-        document.querySelector('.nav-links').innerHTML += `
-            <li><a href="#about">About</a></li>
-            <li><a href="#privacy">Privacy</a></li>
-        `;
-
-        // Init SPA to show home
-        navigateTo('home');
- <!-- Swiper.js CDN for Slider -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" async></script>
-
-    <!-- Additional Pro Styles for Fourth Part -->
-    <style>
-        /* Anime Theme Upgrades */
-        body.anime-theme {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: #fff;
-        }
-
-        body.anime-theme .hero {
-            background-image: url('https://pbs.twimg.com/media/G2n1xQWXUAAuG5f.jpg'); /* Example anime bg */
-            background-blend-mode: overlay;
-        }
-
-        .neon-glow {
-            box-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
-            transition: box-shadow 0.3s;
-        }
-
-        .neon-glow:hover {
-            box-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
-        }
-
-        /* Enhanced Gallery with Slider */
-        .anime-gallery {
-            padding: 100px 20px;
-            background: rgba(0, 0, 0, 0.8);
-        }
-
-        .swiper {
-            width: 100%;
-            height: 500px;
-        }
-
-        .swiper-slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-            transition: transform 0.5s;
-        }
-
-        .swiper-slide:hover img {
-            transform: scale(1.1);
-        }
-
-        /* Filters */
-        .filters {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .filter-btn {
-            background: #4a90e2;
-            color: white;
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .filter-btn.active {
-            background: #ff00ff;
-        }
-
-        /* More Optimizations */
-        img[data-src] {
-            loading: lazy;
-        }
-    </style>
-
-    <!-- New Section: Anime Gallery Pro -->
-    <section id="anime-gallery" class="anime-gallery hidden">
-        <h2>Anime Characters Gallery</h2>
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="azur-lane">Azur Lane</button>
-            <button class="filter-btn" data-filter="honkai">Honkai Star Rail</button>
-            <button class="filter-btn" data-filter="kaguya">Kaguya-Sama</button>
-            <button class="filter-btn" data-filter="sailor-moon">Sailor Moon</button>
-        </div>
-        <div class="swiper">
-            <div class="swiper-wrapper">
-                <!-- Anime Images from Search -->
-                <div class="swiper-slide" data-category="azur-lane">
-                    <img data-src="https://pbs.twimg.com/media/G2n1xQWXUAAuG5f.jpg" alt="Bremerton from Azur Lane - thicc anime girl art">
-                </div>
-                <div class="swiper-slide" data-category="azur-lane">
-                    <img data-src="https://pbs.twimg.com/media/G2n1xQKWkAAC9Zk.jpg" alt="Bremerton variant from Azur Lane">
-                </div>
-                <div class="swiper-slide" data-category="general">
-                    <img data-src="https://pbs.twimg.com/media/G2sgTg4bIAAT89X.jpg" alt="3D anime figure transformation">
-                </div>
-                <div class="swiper-slide" data-category="general">
-                    <img data-src="https://pbs.twimg.com/media/G2sgTg4bIAYH_Oj.jpg" alt="AI-generated anime merch">
-                </div>
-                <div class="swiper-slide" data-category="honkai">
-                    <img data-src="https://pbs.twimg.com/media/G2q7bU5XMAAKBYy.jpg" alt="Kafka from Honkai Star Rail">
-                </div>
-                <div class="swiper-slide" data-category="honkai">
-                    <img data-src="https://pbs.twimg.com/media/G2q7bVCXMAAZCz1.jpg" alt="Kafka variant 1">
-                </div>
-                <div class="swiper-slide" data-category="honkai">
-                    <img data-src="https://pbs.twimg.com/media/G2q7bU9XMAkvCiq.jpg" alt="Kafka variant 2">
-                </div>
-                <div class="swiper-slide" data-category="honkai">
-                    <img data-src="https://pbs.twimg.com/media/G2q7bU-XMAIJqLy.jpg" alt="Kafka variant 3">
-                </div>
-                <div class="swiper-slide" data-category="azur-lane">
-                    <img data-src="https://pbs.twimg.com/media/G2n1sH_XYAAV1rd.jpg" alt="Bremerton thicc art">
-                </div>
-                <div class="swiper-slide" data-category="azur-lane">
-                    <img data-src="https://pbs.twimg.com/media/G2n1sIRXYAAGS76.jpg" alt="Bremerton alternative">
-                </div>
-                <div class="swiper-slide" data-category="kaguya">
-                    <img data-src="https://pbs.twimg.com/media/G2bhAj2XoAAf0IT.jpg" alt="Kaguya Shinomiya from Kaguya-Sama">
-                </div>
-                <div class="swiper-slide" data-category="kaguya">
-                    <img data-src="https://pbs.twimg.com/media/G2bhAj7XwAASNGw.jpg" alt="Kaguya variant 1">
-                </div>
-                <div class="swiper-slide" data-category="general">
-                    <img data-src="https://pbs.twimg.com/media/G2UPZgyawAAIzHc.jpg" alt="Ecchi anime character">
-                </div>
-                <div class="swiper-slide" data-category="general">
-                    <img data-src="https://pbs.twimg.com/media/G2SuDAHbQAAoztQ.jpg" alt="3D anime art">
-                </div>
-                <div class="swiper-slide" data-category="sailor-moon">
-                    <img data-src="https://pbs.twimg.com/media/G2NnevzX0AApSh5.jpg" alt="Makoto Kino from Sailor Moon">
-                </div>
-                <div class="swiper-slide" data-category="general">
-                    <img data-src="https://pbs.twimg.com/media/G2LYA-hXYAAprjC.jpg" alt="Ctholly anime character comparison">
-                </div>
-            </div>
-            <div class="swiper-pagination"></div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-        </div>
-    </section>
-
-    <!-- Additional JavaScript for Fourth Part -->
-    <script>
-        // Toggle Anime Theme
-        function toggleAnimeTheme() {
-            document.body.classList.toggle('anime-theme');
-            localStorage.setItem('animeTheme', document.body.classList.contains('anime-theme'));
-        }
-
-        if (localStorage.getItem('animeTheme') === 'true') {
-            toggleAnimeTheme();
-        }
-
-        // Add to nav
-        document.querySelector('.nav-links').innerHTML += <li><a href="#anime-gallery">Anime Gallery</a></li><li><a href="#" onclick="toggleAnimeTheme()">Anime Theme</a></li>;
-
-        // Swiper Slider Init
-        const swiper = new Swiper('.swiper', {
-            loop: true,
-            autoplay: { delay: 3000 },
-            pagination: { el: '.swiper-pagination', clickable: true },
-            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-            slidesPerView: 1,
-            breakpoints: {
-                640: { slidesPerView: 2, spaceBetween: 20 },
-                1024: { slidesPerView: 4, spaceBetween: 40 }
-            }
-        });
-
-        // Gallery Filters
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const filter = btn.dataset.filter;
-                document.querySelectorAll('.swiper-slide').forEach(slide => {
-                    if (filter === 'all' || slide.dataset.category === filter) {
-                        slide.style.display = 'block';
-                    } else {
-                        slide.style.display = 'none';
-                    }
-                });
-                swiper.update(); // Update swiper after filter
-            });
-        });
-
-        // GSAP Animations for Gallery
-        gsap.from('.swiper-slide', { duration: 1, stagger: 0.1, opacity: 0, y: 50, ease: 'power3.out' });
-
-        // Lazy Loading (already in prev, but ensure)
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            img.src = img.dataset.src;
-        });
-  <!-- Additional Styles for Sixth Part -->
-    <style>
-        /* Improved Preloader */
-        .preloader-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10001;
-        }
-
-        .preloader {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #ff00ff;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-        }
-
-        /* Result Section */
-        .result-section {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .result-section img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .download-button, .share-x-button {
-            background: #ff00ff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            margin: 10px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .download-button:hover, .share-x-button:hover {
-            background: #cc00cc;
-        }
-    </style>
-
-    <!-- Update Uploader Section -->
-    <section id="uploader" class="uploader">
-        <h2>Upload & Convert to Anime</h2>
-        <form class="upload-form" aria-label="Image upload form">
-            <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
-                <p>Drag & Drop or Click to Upload</p>
-            </div>
-            <input type="file" id="fileInput" accept="image/*" onchange="previewImage(event)" aria-label="Upload image">
-            <select id="anime-style" aria-label="Select anime style">
-                <option value="anime">General Anime</option>
-                <option value="naruto">Naruto</option>
-                <option value="jojo">JoJo's Bizarre Adventure</option>
-                <option value="sailor-moon">Sailor Moon</option>
-            </select>
-            <button type="button" class="upload-button" onclick="processImage()">Convert to Anime</button>
-        </form>
-        <div id="preview" class="result-section">
-            <div class="image-container">
-                <h3>Original</h3>
-                <img id="originalPreview" alt="Original uploaded image">
-            </div>
-            <div class="image-container">
-                <h3>Anime Version</h3>
-                <img id="animePreview" alt="Anime converted image" data-src="">
-                <div class="loader"></div>
-            </div>
-            <div class="result-section" id="result-actions" style="display: none;">
-                <button class="download-button" onclick="downloadImage()">Download</button>
-                <button class="share-x-button" onclick="shareToX()">Share to X</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Preloader Overlay -->
-    <div class="preloader-overlay" id="preloader-overlay">
-        <div class="preloader"></div>
+    <div class="instructions">
+        Click and drag to draw pixels on the world map! Zoom with +/- or mouse wheel.
     </div>
 
-    <!-- Additional JavaScript -->
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Update previewImage to show loader
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = document.getElementById('originalPreview');
-                    img.src = e.target.result;
-                    img.classList.add('loaded');
-                    document.querySelector('#preview .loader').style.display = 'none';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+        // Initialize Map
+        const map = L.map('map').setView([20, 0], 2); // Centered on world
 
-        // Process Image with Replicate API
-        async function processImage() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            const style = document.getElementById('anime-style').value;
-            if (!file) return alert('Please upload an image!');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-            // Show preloader
-            const preloader = document.getElementById('preloader-overlay');
-            preloader.style.display = 'flex';
+        // Pixel Canvas Setup
+        const canvas = document.getElementById('pixelCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-            // Convert to base64
-            const base64 = await new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.readAsDataURL(file);
-            });
+        // Pixel size (adjust for zoom)
+        let pixelSize = 4;
+        let isDrawing = false;
+        let currentTool = 'brush';
+        let currentColor = '#00ff00';
 
-            // Style prompts
-            const stylePrompts = {
-                anime: 'high-quality anime style, vibrant colors, detailed backgrounds',
-                naruto: 'Naruto anime style, bold lines, orange and blue tones',
-                jojo: 'JoJo Bizarre Adventure style, dramatic poses, vivid colors',
-                'sailor-moon': 'Sailor Moon style, magical girl aesthetic, sparkles'
-            };
+        // Resize Canvas on Window Resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            redrawPixels(); // Redraw saved pixels
+        });
 
-            try {
-                // Step 1: Upload to Cloudinary first (Replicate needs public URL)
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('upload_preset', 'your_upload_preset'); // Замени на свой
-                const cloudinaryResponse = await fetch(https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload, {
-                    method: 'POST',
-                    body: formData
-                });
-                const cloudinaryData = await cloudinaryResponse.json();
-                const imageUrl = cloudinaryData.secure_url;
+        // Tool Selection
+        document.getElementById('brushBtn').addEventListener('click', () => {
+            currentTool = 'brush';
+            setActiveTool('brushBtn');
+        });
 
-                // Step 2: Send to Replicate
-                const replicateResponse = await fetch('https://api.replicate.com/v1/predictions', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': Token ${REPLICATE_API_TOKEN},
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        version: 'stablediffusion', // Используем Stable Diffusion модель
-                        input: {
-                            image: imageUrl,
-                            prompt: Convert to ${stylePrompts[style]}, masterpiece, 4k resolution,
-                            negative_prompt: 'blurry, lowres, deformed',
-                            num_inference_steps: 30,
-                            guidance_scale: 7.5
-                        }
-                    })
-                });
+        document.getElementById('eraserBtn').addEventListener('click', () => {
+            currentTool = 'eraser';
+            setActiveTool('eraserBtn');
+        });
 
-                if (!replicateResponse.ok) throw new Error('Replicate API error');
-                const prediction = await replicateResponse.json();
+        document.getElementById('colorPicker').addEventListener('change', (e) => {
+            currentColor = e.target.value;
+        });
 
-                // Step 3: Poll for result
-                let result;
-                for (let i = 0; i < 30; i++) {
-                    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s
-                    const statusResponse = await fetch(https://api.replicate.com/v1/predictions/${prediction.id}, {
-                        headers: { 'Authorization': Token ${REPLICATE_API_TOKEN} }
-                    });
-                    result = await statusResponse.json();
-                    if (result.status === 'succeeded') break;
-                    if (result.status === 'failed') throw new Error('Conversion failed');
-                }
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            localStorage.removeItem('pixelData');
+        });
 
-                if (!result.output) throw new Error('No output from Replicate');
-
-                // Step 4: Upload result to Cloudinary
-                const resultBlob = await (await fetch(result.output[0])).blob();
-                const resultFormData = new FormData();
-                resultFormData.append('file', resultBlob, 'anime-output.jpg');
-                resultFormData.append('upload_preset', 'your_upload_preset');
-                const resultCloudinaryResponse = await fetch(https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload, {
-                    method: 'POST',
-                    body: resultFormData
-                });
-                const resultCloudinaryData = await resultCloudinaryResponse.json();
-                const animeUrl = resultCloudinaryData.secure_url;
-
-                // Step 5: Display result
-                const animeImg = document.getElementById('animePreview');
-                animeImg.src = animeUrl;
-                animeImg.classList.add('loaded');
-                gsap.from(animeImg, { duration: 1, scale: 0.8, opacity: 0, ease: 'elastic.out(1, 0.5)' });
-
-                // Show action buttons
-                document.getElementById('result-actions').style.display = 'block';
-
-                // Save to history
-                addToHistory(base64, animeUrl);
-            } catch (error) {
-                console.error(error);
-                alert('Error converting image. Check API tokens or network.');
-                document.getElementById('animePreview').src = 'https://via.placeholder.com/300?text=Error';
-            } finally {
-                preloader.style.display = 'none';
-            }
-        }
-
-        // Download Image
-        function downloadImage() {
-            const animeUrl = document.getElementById('animePreview').src;
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            const data = canvas.toDataURL();
             const link = document.createElement('a');
-            link.href = animeUrl;
-            link.download = 'anime-converted.jpg';
+            link.download = 'pixel-world.png';
+            link.href = data;
             link.click();
+        });
+
+        function setActiveTool(btnId) {
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(btnId).classList.add('active');
         }
 
-        // Share to X
-        async function shareToX() {
-            const animeUrl = document.getElementById('animePreview').src;
-            try {
-                const response = await fetch('/api/share-to-x', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        text: 'Check out my anime-style photo created with Anime Converter! #AnimeArt',
-                        media_url: animeUrl
-                    })
-                });
-                if (response.ok) alert('Shared to X!');
-                else throw new Error('Share failed');
-            } catch (error) {
-                console.error(error);
-                alert('Error sharing to X. Check API setup.');
+        // Drawing Logic
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            draw(e);
+        });
+
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => { isDrawing = false; });
+        canvas.addEventListener('mouseout', () => { isDrawing = false; });
+
+        function draw(e) {
+            if (!isDrawing) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            ctx.fillStyle = currentTool === 'eraser' ? '#000000' : currentColor; // Black for eraser (map background)
+            ctx.fillRect(Math.floor(x / pixelSize) * pixelSize, Math.floor(y / pixelSize) * pixelSize, pixelSize, pixelSize);
+        }
+
+        // Zoom Controls
+        document.getElementById('zoomIn').addEventListener('click', () => map.zoomIn());
+        document.getElementById('zoomOut').addEventListener('click', () => map.zoomOut());
+
+        map.on('zoomend', () => {
+            // Adjust pixel size based on zoom (simple scaling)
+            const zoom = map.getZoom();
+            pixelSize = Math.max(1, 8 - zoom / 2);
+            redrawPixels(); // Adjust pixels on zoom
+        });
+
+        // Mouse Wheel Zoom
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY < 0) map.zoomIn();
+            else map.zoomOut();
+        });
+
+        // Load/Save Pixels (localStorage, keyed by map bounds for persistence)
+        let pixelData = JSON.parse(localStorage.getItem('pixelData')) || {};
+
+        function savePixels() {
+            // Save relative to current view (simplified; in full, use lat/lng)
+            const bounds = map.getBounds();
+            pixelData[JSON.stringify(bounds)] = canvas.toDataURL();
+            localStorage.setItem('pixelData', JSON.stringify(pixelData));
+        }
+
+        function redrawPixels() {
+            // For now, clear and redraw from storage (expand later)
+            if (Object.keys(pixelData).length > 0) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // Load latest (simplified)
+                const latest = Object.values(pixelData)[0];
+                const img = new Image();
+                img.onload = () => ctx.drawImage(img, 0, 0);
+                img.src = latest;
             }
         }
 
-        // Add to nav
-        document.querySelector('.nav-links').innerHTML += <li><a href="#uploader">Converter</a></li>;
-  </script>
+        // Auto-save on draw end
+        canvas.addEventListener('mouseup', savePixels);
+
+        // Init: Load saved pixels
+        redrawPixels();
+
+        // Pointer events for canvas overlay
+        canvas.style.pointerEvents = 'auto'; // Enable drawing on canvas
+    </script>
 </body>
 </html>
