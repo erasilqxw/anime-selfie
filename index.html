@@ -286,6 +286,522 @@
 
         // Pointer events for canvas overlay
         canvas.style.pointerEvents = 'auto'; // Enable drawing on canvas
-    </script>
+    <!-- Additional Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Additional Styles -->
+    <style>
+        /* Tools Modal */
+        .tools-modal {
+            position: fixed;
+            top: 80px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1003;
+            transform: translateY(-100%);
+            transition: transform 0.3s;
+        }
+
+        .tools-modal.open {
+            transform: translateY(0);
+        }
+
+        .palette {
+            display: grid;
+            grid-template-columns: repeat(4, 30px);
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-swatch.selected {
+            border-color: #fff;
+        }
+
+        .brush-size {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .brush-size-btn {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .brush-size-btn.active {
+            background: #00ff00;
+            color: #000;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #00ff00;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1004;
+            display: none;
+        }
+
+        /* Import Section */
+        .import-section {
+            margin-top: 10px;
+        }
+
+        .import-dropzone {
+            border: 2px dashed #00ff00;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        /* Canvas Optimization */
+        #pixelCanvas {
+            image-rendering: pixelated; /* Crisp pixels */
+        }
+    </style>
+
+    <!-- Tools Modal -->
+    <div class="tools-modal" id="toolsModal">
+        <h3>Tools</h3>
+        <div class="palette">
+            <div class="color-swatch" style="background: #ff0000" data-color="#ff0000"></div>
+            <div class="color-swatch" style="background: #00ff00" data-color="#00ff00"></div>
+            <div class="color-swatch" style="background: #0000ff" data-color="#0000ff"></div>
+            <div class="color-swatch" style="background: #ffff00" data-color="#ffff00"></div>
+            <div class="color-swatch" style="background: #ff00ff" data-color="#ff00ff"></div>
+            <div class="color-swatch" style="background: #00ffff" data-color="#00ffff"></div>
+            <div class="color-swatch" style="background: #ffffff" data-color="#ffffff"></div>
+            <div class="color-swatch" style="background: #000000" data-color="#000000"></div>
+            <div class="color-swatch" style="background: #ff9900" data-color="#ff9900"></div>
+            <div class="color-swatch" style="background: #9900ff" data-color="#9900ff"></div>
+            <div class="color-swatch" style="background: #33cc33" data-color="#33cc33"></div>
+            <div class="color-swatch" style="background: #cc33cc" data-color="#cc33cc"></div>
+            <div class="color-swatch" style="background: #666666" data-color="#666666"></div>
+            <div class="color-swatch" style="background: #999999" data-color="#999999"></div>
+            <div class="color-swatch" style="background: #ff6666" data-color="#ff6666"></div>
+            <div class="color-swatch" style="background: #66ccff" data-color="#66ccff"></div>
+        </div>
+        <input type="color" id="customColor" class="color-picker" value="#00ff00">
+        <div class="brush-size">
+            <button class="brush-size-btn" data-size="1">1px</button>
+            <button class="brush-size-btn" data-size="2">2px</button>
+            <button class="brush-size-btn" data-size="4">4px</button>
+            <button class="brush-size-btn active" data-size="8">8px</button>
+        </div>
+        <button class="tool-btn" id="fillBtn">Fill</button>
+        <button class="tool-btn" id="undoBtn">Undo</button>
+        <button class="tool-btn" id="redoBtn">Redo</button>
+        <div class="import-section">
+            <div class="import-dropzone" id="importDropzone">Drag & Drop Image to Import</div>
+            <input type="file" id="importImage" accept="image/*" style="display: none;">
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Additional JavaScript -->
+    <script>
+        // Supabase Setup
+        const supabase = Supabase.createClient('your_supabase_url', 'your_supabase_key');
+
+        // Tools Modal Toggle
+        document.querySelector('.logo').addEventListener('click', () => {
+            const modal = document.getElementById('toolsModal');
+            modal.classList.toggle('open');
+            gsap.to(modal, { duration: 0.3, y: modal.classList.contains('open') ? 0 : -100 });
+        });
+
+        // Palette Selection
+        document.querySelectorAll('.color-swatch').forEach(swatch => {
+            swatch.addEventListener('click', () => {
+                document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                swatch.classList.add('selected');
+                currentColor = swatch.dataset.color;
+                document.getElementById('colorPicker').value = currentColor;
+            });
+        });
+
+        document.getElementById('customColor').addEventListener('change', (e) => {
+            currentColor = e.target.value;
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+        });
+
+        // Brush Size
+        document.querySelectorAll('.brush-size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.brush-size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                pixelSize = parseInt(btn.dataset.size);
+            });
+        });
+
+        // Undo/Redo Stack
+        let undoStack = [];
+        let redoStack = [];
+
+        function saveState() {
+            undoStack.push(canvas.toDataURL());
+            if (undoStack.length > 10) undoStack.shift();
+            redoStack = [];
+            savePixels();
+        }
+
+        document.getElementById('undoBtn').addEventListener('click', () => {
+            if (undoStack.length <= 1) return;
+            redoStack.push(undoStack.pop());
+            const img = new Image();
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+            };
+            img.src = undoStack[undoStack.length - 1] || '';
+            showToast('Undo');
+        });
+
+        document.getElementById('redoBtn').addEventListener('click', () => {
+            if (redoStack.length === 0) return;
+            const img = new Image();
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                undoStack.push(redoStack.pop());
+            };
+            img.src = redoStack[redoStack.length - 1];
+            showToast('Redo');
+        });
+
+        // Fill Tool
+        document.getElementById('fillBtn').addEventListener('click', () => {
+            currentTool = 'fill';
+            setActiveTool('fillBtn');
+        });
+
+        // Update draw for fill
+        const worker = new Worker('/worker.js');
+        canvas.addEventListener('click', (e) => {
+            if (currentTool === 'fill') {
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.floor((e.clientX - rect.left) / pixelSize);
+                const y = Math.floor((e.clientY - rect.top) / pixelSize);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = new Uint32Array(imageData.data.buffer);
+                worker.postMessage({
+                    pixels,
+                    x: x * pixelSize,
+                    y: y * pixelSize,
+                    color: parseInt(currentColor.replace('#', 'ff'), 16),
+                    width: canvas.width,
+                    height: canvas.height
+                });
+                worker.onmessage = (e) => {
+                    ctx.putImageData(new ImageData(new Uint8ClampedArray(e.data.buffer), canvas.width, canvas.height), 0, 0);
+                    saveState();
+                    saveToSupabase(x * pixelSize, y * pixelSize, currentColor);
+                };
+            }
+        });
+
+        // Update draw for brush/eraser
+        const originalDraw = draw;
+        draw = function(e) {
+            if (!isDrawing || currentTool === 'fill') return;
+            originalDraw(e);
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / pixelSize) * pixelSize;
+            const y = Math.floor((e.clientY - rect.top) / pixelSize) * pixelSize;
+            saveToSupabase(x, y, currentTool === 'eraser' ? '#000000' : currentColor);
+            saveState();
+        };
+
+        // Supabase Realtime
+        supabase.channel('pixels').on('postgres_changes', { event: '*', schema: 'public', table: 'pixels' }, (payload) => {
+            const { x, y, color } = payload.new;
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, pixelSize, pixelSize);
+        }).subscribe();
+
+        async function saveToSupabase(x, y, color) {
+            const { data, error } = await supabase.from('pixels').insert([{ x, y, color, user_id: localStorage.getItem('user_id') || 'anonymous' }]);
+            if (error) console.error('Supabase error:', error);
+        }
+
+        // Image Import
+        const dropzone = document.getElementById('importDropzone');
+        dropzone.addEventListener('click', () => document.getElementById('importImage').click());
+        dropzone.addEventListener('dragover', (e) => e.preventDefault());
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file) handleImageImport(file);
+        });
+        document.getElementById('importImage').addEventListener('change', (e) => {
+            if (e.target.files[0]) handleImageImport(e.target.files[0]);
+        });
+
+        function handleImageImport(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    saveState();
+                    showToast('Image imported');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            gsap.fromTo(toast, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5 });
+            setTimeout(() => {
+                gsap.to(toast, { opacity: 0, y: 20, duration: 0.5, onComplete: () => toast.style.display = 'none' });
+            }, 2000);
+        }
+
+        // Update nav
+        document.querySelector('.tools').innerHTML += <button class="tool-btn" onclick="document.getElementById('toolsModal').classList.toggle('open')">Toggle Tools</button>;
+    <!-- Additional Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.min.js" async></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.min.css" />
+
+    <!-- Additional Styles -->
+    <style>
+        /* Mini Map */
+        .minimap-container {
+            width: 150px;
+            height: 150px;
+            position: fixed;
+            bottom: 60px;
+            right: 10px;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            z-index: 1002;
+        }
+
+        /* Canvas Tiles */
+        .pixel-tile {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        /* Zoom Warning */
+        .zoom-warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            z-index: 1004;
+        }
+    </style>
+
+    <!-- Zoom Warning -->
+    <div class="zoom-warning" id="zoomWarning">Zoom in closer (level 10+) to draw!</div>
+
+    <!-- Additional JavaScript -->
+    <script>
+        // Supabase Setup (if not already)
+        const supabase = Supabase.createClient('your_supabase_url', 'your_supabase_key');
+
+        // Update pixel canvas to use tiles
+        const pixelCanvases = new Map(); // Store canvases by tile key
+        const MIN_ZOOM = 10; // Minimum zoom level for drawing
+
+        // Initialize Mini Map
+        const miniMapLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap'
+        });
+        const miniMap = new L.Control.MiniMap(miniMapLayer, {
+            toggleDisplay: true,
+            minimized: false,
+            position: 'bottomright'
+        }).addTo(map);
+
+        gsap.from('.minimap-container', { duration: 1, scale: 0, ease: 'elastic.out(1, 0.5)' });
+
+        // Update canvas setup
+        function createTileCanvas(bounds) {
+            const canvas = document.createElement('canvas');
+            canvas.className = 'pixel-tile';
+            const point = map.latLngToLayerPoint(bounds.getNorthWest());
+            canvas.style.left = ${point.x}px;
+            canvas.style.top = ${point.y}px;
+            canvas.width = 256 * pixelSize; // Tile size
+            canvas.height = 256 * pixelSize;
+            document.getElementById('map').appendChild(canvas);
+            return canvas;
+        }
+
+        // Load pixels from Supabase
+        async function loadPixels() {
+            const bounds = map.getBounds();
+            const { data, error } = await supabase
+                .from('pixels')
+                .select('*')
+                .gte('lat', bounds.getSouth())
+                .lte('lat', bounds.getNorth())
+                .gte('lng', bounds.getWest())
+                .lte('lng', bounds.getEast());
+
+            if (error) {
+                console.error('Supabase load error:', error);
+                showToast('Failed to load pixels');
+                return;
+            }
+
+            pixelCanvases.forEach((canvas, key) => canvas.remove());
+            pixelCanvases.clear();
+
+            const zoom = map.getZoom();
+            data.forEach(pixel => {
+                const latLng = L.latLng(pixel.lat, pixel.lng);
+                const point = map.latLngToLayerPoint(latLng);
+                const tileKey = ${Math.floor(point.x / 256)}-${Math.floor(point.y / 256)};
+                let canvas = pixelCanvases.get(tileKey);
+                if (!canvas) {
+                    const bounds = L.latLngBounds(
+                        map.layerPointToLatLng([Math.floor(point.x / 256) * 256, Math.floor(point.y / 256) * 256]),
+                        map.layerPointToLatLng([(Math.floor(point.x / 256) + 1) * 256, (Math.floor(point.y / 256) + 1) * 256])
+                    );
+                    canvas = createTileCanvas(bounds);
+                    pixelCanvases.set(tileKey, canvas);
+                }
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = pixel.color;
+                ctx.fillRect((point.x % 256) * pixelSize, (point.y % 256) * pixelSize, pixelSize, pixelSize);
+            });
+        }
+
+        // Update drawing logic
+        canvas.removeEventListener('mousedown', draw);
+        canvas.removeEventListener('mousemove', draw);
+        canvas.removeEventListener('mouseup', savePixels);
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (map.getZoom() < MIN_ZOOM) {
+                showToast('Zoom in to draw!');
+                gsap.to('#zoomWarning', { duration: 0.3, display: 'block', opacity: 1 });
+                setTimeout(() => gsap.to('#zoomWarning', { duration: 0.3, opacity: 0, display: 'none' }), 2000);
+                return;
+            }
+            isDrawing = true;
+            drawPixel(e);
+        });
+
+        canvas.addEventListener('mousemove', drawPixel);
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+            saveState();
+        });
+
+        async function drawPixel(e) {
+            if (!isDrawing || currentTool === 'fill') return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const latLng = map.containerPointToLatLng([x, y]);
+            const point = map.latLngToLayerPoint(latLng);
+            const tileKey = ${Math.floor(point.x / 256)}-${Math.floor(point.y / 256)};
+            let tileCanvas = pixelCanvases.get(tileKey);
+            if (!tileCanvas) {
+                const bounds = L.latLngBounds(
+                    map.layerPointToLatLng([Math.floor(point.x / 256) * 256, Math.floor(point.y / 256) * 256]),
+                    map.layerPointToLatLng([(Math.floor(point.x / 256) + 1) * 256, (Math.floor(point.y / 256) + 1) * 256])
+                );
+                tileCanvas = createTileCanvas(bounds);
+                pixelCanvases.set(tileKey, tileCanvas);
+            }
+            const ctx = tileCanvas.getContext('2d');
+            ctx.fillStyle = currentTool === 'eraser' ? '#000000' : currentColor;
+            ctx.fillRect((point.x % 256) * pixelSize, (point.y % 256) * pixelSize, pixelSize, pixelSize);
+            await saveToSupabase(latLng.lat, latLng.lng, ctx.fillStyle);
+        }
+
+        // Update fill tool
+        canvas.addEventListener('click', async (e) => {
+            if (currentTool !== 'fill' || map.getZoom() < MIN_ZOOM) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const latLng = map.containerPointToLatLng([x, y]);
+            const point = map.latLngToLayerPoint(latLng);
+            const tileKey = ${Math.floor(point.x / 256)}-${Math.floor(point.y / 256)};
+            let tileCanvas = pixelCanvases.get(tileKey);
+            if (!tileCanvas) {
+                const bounds = L.latLngBounds(
+                    map.layerPointToLatLng([Math.floor(point.x / 256) * 256, Math.floor(point.y / 256) * 256]),
+                    map.layerPointToLatLng([(Math.floor(point.x / 256) + 1) * 256, (Math.floor(point.y / 256) + 1) * 256])
+                );
+                tileCanvas = createTileCanvas(bounds);
+                pixelCanvases.set(tileKey, tileCanvas);
+            }
+            const ctx = tileCanvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, tileCanvas.width, tileCanvas.height);
+            worker.postMessage({
+                pixels: new Uint32Array(imageData.data.buffer),
+                lat: (point.x % 256) * pixelSize,
+                lng: (point.y % 256) * pixelSize,
+                color: parseInt(currentColor.replace('#', 'ff'), 16),
+                width: tileCanvas.width,
+                height: tileCanvas.height,
+                pixelSize
+            });
+            worker.onmessage = async (e) => {
+                ctx.putImageData(new ImageData(new Uint8ClampedArray(e.data.buffer), tileCanvas.width, tileCanvas.height), 0, 0);
+                saveState();
+                await saveToSupabase(latLng.lat, latLng.lng, currentColor);
+            };
+        });
+
+        // Update Supabase table schema
+        async function saveToSupabase(lat, lng, color) {
+            const { data, error } = await supabase
+                .from('pixels')
+                .upsert([{ lat, lng, color, user_id: localStorage.getItem('user_id') || 'anonymous' }], { onConflict: ['lat', 'lng'] });
+            if (error) {
+                console.error('Supabase save error:', error);
+                showToast('Failed to save pixel');
+            }
+        }
+
+        // Load pixels on map move/zoom
+        map.on('moveend zoomend', loadPixels);
+
+        // Update nav
+        document.querySelector('.tools').innerHTML += <button class="tool-btn" onclick="map.setZoom(10)">Zoom to Draw</button>;
+
+        // Initial load
+        loadPixels();
+</script>
 </body>
 </html>
