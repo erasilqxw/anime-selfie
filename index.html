@@ -1,1 +1,326 @@
-html <img src=https://i.pinimg.com/564x/15/0f6b5f2b3c9d1e1c5a.jpg class=аниме alt=аниме> <img src=https://i.pinimg.com/564x/2d/5c/9a/2d5c9a7f8e8c3e6b8f2a4c8d9e0e1b1f.jpg class=аниме alt=аниме2> А теперь в стиле, который я давал, добавь это в самое низу: css .аниме { width: 40%; margin: 5%; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Selfie Generator - Стань Аниме-Персонажем!</title>
+    <style>
+        /* Базовые стили для всего сайта */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif; /* Крутой шрифт, скачай его с Google Fonts или добавь link ниже */
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%); /* Градиент в аниме-стиле: розово-персиковый */
+            color: #333;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Шапка с логотипом и заголовком */
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 40px 0;
+            background: rgba(255, 255, 255, 0.2); /* Полупрозрачный фон для глубины */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px); /* Размытие для крутого эффекта */
+            position: fixed;
+            top: 0;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #e94560; /* Яркий розовый аниме-цвет */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: glow 2s ease-in-out infinite alternate; /* Анимация свечения */
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073;
+            }
+            to {
+                text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6;
+            }
+        }
+
+        /* Основной контейнер для контента */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 800px;
+            margin-top: 150px; /* Чтоб шапка не перекрывала */
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Стили для загрузки фото */
+        .upload-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        #фото {
+            display: none; /* Скрываем стандартный input, используем кастомный */
+        }
+
+        .upload-label {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .upload-label:hover {
+            background: #e94560;
+            transform: scale(1.05);
+        }
+
+        .preview {
+            margin-top: 20px;
+            width: 200px;
+            height: 200px;
+            border: 2px dashed #e94560;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .preview img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 50%;
+        }
+
+        /* Кнопка генерации */
+        button {
+
+> Ера:
+background: linear-gradient(to right, #ff758c, #ff7eb3);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.5em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 15px rgba(255, 117, 140, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 117, 140, 0.6);
+        }
+
+        /* Место для результата */
+        .result-section {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .result-img {
+            width: 300px;
+            margin: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .result-img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Выбор стиля аниме (кнопки) */
+        .styles-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .style-btn {
+            background: #fff;
+            border: 2px solid #e94560;
+            color: #e94560;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .style-btn:hover {
+            background: #e94560;
+            color: white;
+        }
+
+        .style-btn.active {
+            background: #e94560;
+            color: white;
+        }
+
+        /* Частицы для аниме-эффекта (как сакуры или звёзды) */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: fall 10s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100%); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* Responsive для мобильных */
+        @media (max-width: 600px) {
+            h1 { font-size: 2em; }
+            .main-container { padding: 20px; width: 95%; }
+            .preview { width: 150px; height: 150px; }
+            button { padding: 10px 30px; font-size: 1.2em; }
+            .result-img { width: 100%; margin: 10px 0; }
+        }
+
+        /* Ещё крутые фичи: добавь Google Fonts */
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="particles">
+        <!-- Генерация частиц через JS -->
+    </div>
+
+    <header>
+        <h1>Anime Selfie Generator</h1>
+    </header>
+
+    <div class="main-container">
+        <div class="upload-section">
+            <label for="фото" class="upload-label">Загрузи своё фото</label>
+            <input type="file" id="фото" accept="image/*">
+            <div class="preview">
+                <img id="preview-img" src="" alt="Предпросмотр">
+            </div>
+        </div>
+
+        <div class="styles-section">
+            <button class="style-btn" onclick="selectStyle('naruto')">Наруто</button>
+            <button class="style-btn" onclick="selectStyle('jojo')">Джоджо</button>
+            <button class="style-btn" onclick="selectStyle('onepiece')">Ван Пис</button>
+        </div>
+
+        <button onclick="го()">Преврати меня в аниме!</button>
+
+        <div class="result-section" id="result"></div>
+    </div>
+
+    <script>
+        let selectedStyle = ''; // Для хранения выбранного стиля
+
+        // Предпросмотр фото
+        document.getElementById('фото').addEventListener('change', function(e) {
+            let file = e.target.files[0];
+
+> Ера:
+if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview-img').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Выбор стиля
+        function selectStyle(style) {
+            selectedStyle = style;
+            document.querySelectorAll('.style-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            alert(`Выбран стиль: ${style.charAt(0).toUpperCase() + style.slice(1)}`);
+        }
+
+        // Функция генерации (пока заглушка, вставь свой API здесь)
+        async function го() {
+            let file = document.getElementById('фото').files[0];
+            if (!file) return alert('Загрузи фото сначала!');
+            if (!selectedStyle) return alert('Выбери стиль аниме!');
+
+            // Здесь будет код с API, пока заглушка
+            alert(`Генерирую в стиле ${selectedStyle}! (Пока это заглушка, но скоро будет реально)`);
+
+            // Пример добавления результата
+            let result = document.getElementById('result');
+            let img = document.createElement('img');
+            img.src = 'https://via.placeholder.com/300?text=Твоё+Аниме+в+стиле+' + selectedStyle; // Замени на реальный URL от API
+            img.classList.add('result-img');
+            result.appendChild(img);
+        }
+
+        // Генерация частиц (аниме-эффект)
+        function createParticles() {
+            let particlesContainer = document.querySelector('.particles');
+            for (let i = 0; i < 50; i++) { // 50 частиц
+                let particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.background = hsl(${Math.random() * 360}, 100%, 80%); // Разные цвета
+                particlesContainer.appendChild(particle);
+            }
+        }
+        createParticles(); // Запускаем частицы
+    </script>
+</body>
+</html>
+
